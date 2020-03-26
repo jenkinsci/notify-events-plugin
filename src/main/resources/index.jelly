@@ -1,0 +1,4 @@
+<?jelly escape-by-default='true'?>
+<div>
+    This plugin allows you to send messages from Jenkins jobs to Telegram, Viber, Skype, SMS, Voice Call and many others.
+</div>
