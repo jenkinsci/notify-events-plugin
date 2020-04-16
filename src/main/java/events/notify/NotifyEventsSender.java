@@ -1,4 +1,4 @@
-package io.jenkins.plugins;
+package events.notify;
 
 import hudson.model.AbstractProject;
 import hudson.model.Build;

@@ -1,4 +1,4 @@
-package io.jenkins.plugins;
+package events.notify;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import hudson.Extension;
@@ -10,9 +10,7 @@ import hudson.model.Result;
 import hudson.model.Run;
 import hudson.model.TaskListener;
 import hudson.tasks.BuildStepDescriptor;
-import hudson.tasks.BuildStepMonitor;
-import hudson.tasks.Notifier;
-import hudson.tasks.Publisher;
+import hudson.tasks.Builder;
 import hudson.util.FormValidation;
 import jenkins.tasks.SimpleBuildStep;
 import org.kohsuke.stapler.DataBoundConstructor;
@@ -21,25 +19,15 @@ import org.kohsuke.stapler.QueryParameter;
 import javax.annotation.Nonnull;
 import java.io.IOException;
 
-public class NotifyEventsPublisher extends Notifier implements SimpleBuildStep {
+public class NotifyEventsBuilder extends Builder implements SimpleBuildStep {
 
     private final String token;
     private final String message;
 
-    private final boolean onSuccess;
-    private final boolean onUnstable;
-    private final boolean onFailure;
-    private final boolean onAborted;
-
     @DataBoundConstructor
-    public NotifyEventsPublisher(String token, String message, boolean onSuccess, boolean onUnstable, boolean onFailure, boolean onAborted) {
+    public NotifyEventsBuilder(String token, String message) {
         this.token = Util.fixEmptyAndTrim(token);
         this.message = Util.fixEmptyAndTrim(message);
-
-        this.onSuccess = onSuccess;
-        this.onUnstable = onUnstable;
-        this.onFailure = onFailure;
-        this.onAborted = onAborted;
     }
 
     @Override
@@ -56,26 +44,14 @@ public class NotifyEventsPublisher extends Notifier implements SimpleBuildStep {
             return;
         }
 
-        Result result = run.getResult();
+        if ((message == null) || (message.length() == 0)) {
+            taskListener.error("Message can't be empty");
+            run.setResult(Result.FAILURE);
 
-        if (((result == Result.SUCCESS) && onSuccess)
-                || ((result == Result.UNSTABLE) && onUnstable)
-                || ((result == Result.FAILURE) && onFailure)
-                || ((result == Result.ABORTED) && onAborted)) {
-            if (onSuccess) {
-                NotifyEventsSender.getInstance().send(token, result.toString().toLowerCase(), message, run);
-            }
+            return;
         }
-    }
 
-    @Override
-    public BuildStepMonitor getRequiredMonitorService() {
-        return BuildStepMonitor.NONE;
-    }
-
-    @Override
-    public NotifyEventsPublisherDescriptor getDescriptor() {
-        return (NotifyEventsPublisherDescriptor) super.getDescriptor();
+        NotifyEventsSender.getInstance().send(token, "message", message, run);
     }
 
     public String getToken() {
@@ -86,24 +62,8 @@ public class NotifyEventsPublisher extends Notifier implements SimpleBuildStep {
         return message;
     }
 
-    public boolean isOnSuccess() {
-        return onSuccess;
-    }
-
-    public boolean isOnUnstable() {
-        return onUnstable;
-    }
-
-    public boolean isOnFailure() {
-        return onFailure;
-    }
-
-    public boolean isOnAborted() {
-        return onAborted;
-    }
-
     @Extension
-    public static class NotifyEventsPublisherDescriptor extends BuildStepDescriptor<Publisher> {
+    public static class NotifyEventsBuilderDescriptor extends BuildStepDescriptor<Builder> {
 
         @Override
         public boolean isApplicable(Class<? extends AbstractProject> jobType) {
@@ -123,6 +83,14 @@ public class NotifyEventsPublisher extends Notifier implements SimpleBuildStep {
 
             if (value.length() != 32) {
                 return FormValidation.error("Invalid token format");
+            }
+
+            return FormValidation.ok();
+        }
+
+        public FormValidation doCheckMessage(@QueryParameter String value) {
+            if (Util.fixEmptyAndTrim(value) == null) {
+                return FormValidation.error("Message can't be empty");
             }
 
             return FormValidation.ok();
