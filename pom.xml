@@ -7,7 +7,7 @@
         <version>3.48</version>
         <relativePath />
     </parent>
-    <groupId>io.jenkins.plugins</groupId>
+    <groupId>events.notify</groupId>
     <name>Notify.Events</name>
     <artifactId>notify-events</artifactId>
     <description>This plugin allows you to send messages from Jenkins jobs to Telegram, Viber, Skype, SMS, Voice Call and many others.</description>
