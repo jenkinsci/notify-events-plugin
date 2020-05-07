@@ -1,5 +1,6 @@
 package events.notify;
 
+import com.google.common.base.Strings;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import hudson.Extension;
 import hudson.FilePath;
@@ -14,6 +15,7 @@ import hudson.tasks.BuildStepMonitor;
 import hudson.tasks.Notifier;
 import hudson.tasks.Publisher;
 import hudson.util.FormValidation;
+import hudson.util.Secret;
 import jenkins.tasks.SimpleBuildStep;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
@@ -23,7 +25,7 @@ import java.io.IOException;
 
 public class NotifyEventsPublisher extends Notifier implements SimpleBuildStep {
 
-    private final String token;
+    private final Secret token;
     private final String message;
 
     private final boolean onSuccess;
@@ -33,7 +35,7 @@ public class NotifyEventsPublisher extends Notifier implements SimpleBuildStep {
 
     @DataBoundConstructor
     public NotifyEventsPublisher(String token, String message, boolean onSuccess, boolean onUnstable, boolean onFailure, boolean onAborted) {
-        this.token = Util.fixEmptyAndTrim(token);
+        this.token = Secret.fromString(Util.fixEmptyAndTrim(token));
         this.message = Util.fixEmptyAndTrim(message);
 
         this.onSuccess = onSuccess;
@@ -49,7 +51,7 @@ public class NotifyEventsPublisher extends Notifier implements SimpleBuildStep {
             @Nonnull Launcher launcher,
             @Nonnull TaskListener taskListener) throws InterruptedException, IOException {
 
-        if ((token == null) || (token.length() != 32)) {
+        if (Strings.isNullOrEmpty(token.getPlainText()) || (token.getPlainText().length() != 32)) {
             taskListener.error("Invalid token");
             run.setResult(Result.FAILURE);
 
@@ -78,7 +80,7 @@ public class NotifyEventsPublisher extends Notifier implements SimpleBuildStep {
         return (NotifyEventsPublisherDescriptor) super.getDescriptor();
     }
 
-    public String getToken() {
+    public Secret getToken() {
         return token;
     }
 

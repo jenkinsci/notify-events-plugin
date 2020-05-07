@@ -1,5 +1,6 @@
 package events.notify;
 
+import com.google.common.base.Strings;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import hudson.Extension;
 import hudson.FilePath;
@@ -12,6 +13,7 @@ import hudson.model.TaskListener;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.Builder;
 import hudson.util.FormValidation;
+import hudson.util.Secret;
 import jenkins.tasks.SimpleBuildStep;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
@@ -21,12 +23,12 @@ import java.io.IOException;
 
 public class NotifyEventsBuilder extends Builder implements SimpleBuildStep {
 
-    private final String token;
+    private final Secret token;
     private final String message;
 
     @DataBoundConstructor
     public NotifyEventsBuilder(String token, String message) {
-        this.token = Util.fixEmptyAndTrim(token);
+        this.token = Secret.fromString(Util.fixEmptyAndTrim(token));
         this.message = Util.fixEmptyAndTrim(message);
     }
 
@@ -37,14 +39,14 @@ public class NotifyEventsBuilder extends Builder implements SimpleBuildStep {
             @Nonnull Launcher launcher,
             @Nonnull TaskListener taskListener) throws InterruptedException, IOException {
 
-        if ((token == null) || (token.length() != 32)) {
+        if (Strings.isNullOrEmpty(token.getPlainText()) || (token.getPlainText().length() != 32)) {
             taskListener.error("Invalid token");
             run.setResult(Result.FAILURE);
 
             return;
         }
 
-        if ((message == null) || (message.length() == 0)) {
+        if (Strings.isNullOrEmpty(message) || (message.length() == 0)) {
             taskListener.error("Message can't be empty");
             run.setResult(Result.FAILURE);
 
@@ -54,7 +56,7 @@ public class NotifyEventsBuilder extends Builder implements SimpleBuildStep {
         NotifyEventsSender.getInstance().send(token, "message", message, run);
     }
 
-    public String getToken() {
+    public Secret getToken() {
         return token;
     }
 

@@ -3,6 +3,7 @@ package events.notify;
 import hudson.model.AbstractProject;
 import hudson.model.Build;
 import hudson.model.Run;
+import hudson.util.Secret;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -35,7 +36,7 @@ public class NotifyEventsSender {
         return instance;
     }
 
-    public void send(String token, String type, String message, Run<?, ?> run) {
+    public void send(Secret token, String type, String message, Run<?, ?> run) {
         JSONObject json = new JSONObject();
 
         json.put("type", type);
@@ -67,7 +68,7 @@ public class NotifyEventsSender {
 
         RequestBody body = RequestBody.create(JSON_MEDIA_TYPE, jsonString);
 
-        String url = "https://notify.events/api/v1/channel/source/" + token + "/execute";
+        String url = "https://notify.events/api/v1/channel/source/" + token.getPlainText() + "/execute";
 
         Request request = new Request.Builder().url(url).post(body).build();
 
