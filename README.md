@@ -26,7 +26,7 @@ You can find full supported messenger list [here](https://notify.events/en-US/fe
 2. Find and install **Notify.Events**
 
 ### Download an hpi
-1. Download _notify-events-*.hpi_ release [here](https://github.com/jenkinsci/notify-events-plugin/releases)
+1. Download latest _notify-events.hpi_ release [here](http://archives.jenkins-ci.org/plugins/notify-events/latest/notify-events.hpi)
 2. [Manually install](https://jenkins.io/doc/book/managing/plugins/#advanced-installation) plugin to your Jenkins
 
 ### Build from source

@@ -26,7 +26,7 @@
 2. Найдите и установите плагин **Notify.Events**
 
 ### Скачайте hpi
-1. Скачайте релиз _notify-events-*.hpi_ [здесь](https://github.com/jenkinsci/notify-events-plugin/releases)
+1. Скачайте последний релиз _notify-events.hpi_ [здесь](http://archives.jenkins-ci.org/plugins/notify-events/latest/notify-events.hpi)
 2. [Установите](https://jenkins.io/doc/book/managing/plugins/#advanced-installation) плагин в ваш Jenkins
 
 ### Сборка из исходников
