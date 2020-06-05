@@ -2,10 +2,7 @@ package events.notify;
 
 import com.google.common.base.Strings;
 import edu.umd.cs.findbugs.annotations.NonNull;
-import hudson.Extension;
-import hudson.FilePath;
-import hudson.Launcher;
-import hudson.Util;
+import hudson.*;
 import hudson.model.AbstractProject;
 import hudson.model.Result;
 import hudson.model.Run;
@@ -61,12 +58,12 @@ public class NotifyEventsPublisher extends Notifier implements SimpleBuildStep {
         Result result = run.getResult();
 
         if (((result == Result.SUCCESS) && onSuccess)
-                || ((result == Result.UNSTABLE) && onUnstable)
-                || ((result == Result.FAILURE) && onFailure)
-                || ((result == Result.ABORTED) && onAborted)) {
-            if (onSuccess) {
-                NotifyEventsSender.getInstance().send(token, result.toString().toLowerCase(), message, run);
-            }
+         || ((result == Result.UNSTABLE) && onUnstable)
+         || ((result == Result.FAILURE) && onFailure)
+         || ((result == Result.ABORTED) && onAborted)) {
+            EnvVars env = run.getEnvironment(taskListener);
+
+            NotifyEventsSender.getInstance().send(token, result.toString().toLowerCase(), message, run, env);
         }
     }
 

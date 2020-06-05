@@ -2,10 +2,7 @@ package events.notify;
 
 import com.google.common.base.Strings;
 import edu.umd.cs.findbugs.annotations.NonNull;
-import hudson.Extension;
-import hudson.FilePath;
-import hudson.Launcher;
-import hudson.Util;
+import hudson.*;
 import hudson.model.AbstractProject;
 import hudson.model.Result;
 import hudson.model.Run;
@@ -53,7 +50,9 @@ public class NotifyEventsBuilder extends Builder implements SimpleBuildStep {
             return;
         }
 
-        NotifyEventsSender.getInstance().send(token, "message", message, run);
+        EnvVars env = run.getEnvironment(taskListener);
+
+        NotifyEventsSender.getInstance().send(token, "message", message, run, env);
     }
 
     public Secret getToken() {

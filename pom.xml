@@ -12,10 +12,10 @@
     <artifactId>notify-events</artifactId>
     <description>This plugin allows you to send messages from Jenkins jobs to Telegram, Viber, Skype, SMS, Voice Call and many others.</description>
     <url>https://github.com/jenkinsci/notify-events-plugin</url>
-    <version>1.0.2-SNAPSHOT</version>
+    <version>1.1.0-SNAPSHOT</version>
     <packaging>hpi</packaging>
     <properties>
-        <jenkins.version>2.164.1</jenkins.version>
+        <jenkins.version>2.130</jenkins.version>
         <java.level>8</java.level>
     </properties>
     <scm>

@@ -1,5 +1,6 @@
 package events.notify;
 
+import hudson.EnvVars;
 import hudson.model.AbstractProject;
 import hudson.model.Build;
 import hudson.model.Run;
@@ -36,7 +37,9 @@ public class NotifyEventsSender {
         return instance;
     }
 
-    public void send(Secret token, String type, String message, Run<?, ?> run) {
+    public void send(Secret token, String type, String message, Run<?, ?> run, EnvVars env) {
+        message = env.expand(message);
+
         JSONObject json = new JSONObject();
 
         json.put("type", type);
