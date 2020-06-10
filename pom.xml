@@ -12,7 +12,7 @@
     <artifactId>notify-events</artifactId>
     <description>This plugin allows you to send messages from Jenkins jobs to Telegram, Viber, Skype, SMS, Voice Call and many others.</description>
     <url>https://github.com/jenkinsci/notify-events-plugin</url>
-    <version>1.1.1-SNAPSHOT</version>
+    <version>1.2.0-SNAPSHOT</version>
     <packaging>hpi</packaging>
     <properties>
         <jenkins.version>2.130</jenkins.version>
@@ -52,6 +52,11 @@
             <groupId>com.squareup.okhttp3</groupId>
             <artifactId>okhttp</artifactId>
             <version>3.8.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jenkins-ci.plugins</groupId>
+            <artifactId>token-macro</artifactId>
+            <version>2.12</version>
         </dependency>
     </dependencies>
 </project>

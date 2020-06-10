@@ -1,17 +1,25 @@
 package events.notify;
 
-import hudson.EnvVars;
+import hudson.FilePath;
 import hudson.model.AbstractProject;
 import hudson.model.Build;
 import hudson.model.Run;
+import hudson.model.TaskListener;
 import hudson.util.Secret;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
+import org.jenkinsci.plugins.tokenmacro.MacroEvaluationException;
+import org.jenkinsci.plugins.tokenmacro.TokenMacro;
 import org.json.simple.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Level;
 
 public class NotifyEventsSender {
 
@@ -37,8 +45,16 @@ public class NotifyEventsSender {
         return instance;
     }
 
-    public void send(Secret token, String type, String message, Run<?, ?> run, EnvVars env) {
-        message = env.expand(message);
+    public void send(Secret token, String type, String message, Run<?, ?> run, FilePath workspace, TaskListener listener) {
+        List<TokenMacro> macros = new ArrayList<>();
+
+        try {
+            message = TokenMacro.expandAll(run, workspace, listener, message, false, macros);
+        } catch (MacroEvaluationException e) {
+            listener.getLogger().println("Error evaluating token: " + e.getMessage());
+        } catch (Exception e) {
+            java.util.logging.Logger.getLogger(NotifyEventsSender.class.getName()).log(Level.SEVERE, null, e);
+        }
 
         JSONObject json = new JSONObject();
 
