@@ -15,7 +15,9 @@ import hudson.tasks.Builder;
 import hudson.util.FormValidation;
 import hudson.util.Secret;
 import jenkins.tasks.SimpleBuildStep;
+import org.jenkinsci.Symbol;
 import org.kohsuke.stapler.DataBoundConstructor;
+import org.kohsuke.stapler.DataBoundSetter;
 import org.kohsuke.stapler.QueryParameter;
 
 import javax.annotation.Nonnull;
@@ -23,13 +25,38 @@ import java.io.IOException;
 
 public class NotifyEventsBuilder extends Builder implements SimpleBuildStep {
 
-    private final Secret token;
-    private final String message;
+    private Secret token;
+    private String message;
+
+    @Override
+    public DescriptorImpl getDescriptor() {
+        return (DescriptorImpl) super.getDescriptor();
+    }
 
     @DataBoundConstructor
     public NotifyEventsBuilder(String token, String message) {
-        this.token = Secret.fromString(Util.fixEmptyAndTrim(token));
+        this.token   = Secret.fromString(Util.fixEmptyAndTrim(token));
         this.message = Util.fixEmptyAndTrim(message);
+    }
+
+    public String getToken() {
+        return token.getPlainText();
+    }
+
+    public void setToken(String token) {
+        this.token = Secret.fromString(token);
+    }
+
+    public void setToken(Secret token) {
+        this.token = token;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
     }
 
     @Override
@@ -56,16 +83,35 @@ public class NotifyEventsBuilder extends Builder implements SimpleBuildStep {
         NotifyEventsSender.getInstance().send(token, "message", message, run, filePath, taskListener);
     }
 
-    public Secret getToken() {
-        return token;
-    }
-
-    public String getMessage() {
-        return message;
-    }
-
     @Extension
-    public static class NotifyEventsBuilderDescriptor extends BuildStepDescriptor<Builder> {
+    @Symbol("notifyEvents")
+    public static class DescriptorImpl extends BuildStepDescriptor<Builder> {
+
+        private Secret token;
+        private String message;
+
+        public String getToken() {
+            return token.getPlainText();
+        }
+
+        @DataBoundSetter
+        public void setToken(String token) {
+            this.token = Secret.fromString(token);
+        }
+
+        @DataBoundSetter
+        public void setToken(Secret token) {
+            this.token = token;
+        }
+
+        public String getMessage() {
+            return message;
+        }
+
+        @DataBoundSetter
+        public void setMessage(String message) {
+            this.message = message;
+        }
 
         @Override
         public boolean isApplicable(Class<? extends AbstractProject> jobType) {

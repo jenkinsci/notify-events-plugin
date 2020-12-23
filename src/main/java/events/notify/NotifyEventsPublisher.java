@@ -11,13 +11,13 @@ import hudson.model.Result;
 import hudson.model.Run;
 import hudson.model.TaskListener;
 import hudson.tasks.BuildStepDescriptor;
-import hudson.tasks.BuildStepMonitor;
 import hudson.tasks.Notifier;
 import hudson.tasks.Publisher;
 import hudson.util.FormValidation;
 import hudson.util.Secret;
 import jenkins.tasks.SimpleBuildStep;
 import org.kohsuke.stapler.DataBoundConstructor;
+import org.kohsuke.stapler.DataBoundSetter;
 import org.kohsuke.stapler.QueryParameter;
 
 import javax.annotation.Nonnull;
@@ -25,22 +25,79 @@ import java.io.IOException;
 
 public class NotifyEventsPublisher extends Notifier implements SimpleBuildStep {
 
-    private final Secret token;
-    private final String message;
+    private Secret token;
+    private String message;
 
-    private final boolean onSuccess;
-    private final boolean onUnstable;
-    private final boolean onFailure;
-    private final boolean onAborted;
+    private boolean onSuccess;
+    private boolean onUnstable;
+    private boolean onFailure;
+    private boolean onAborted;
+
+    @Override
+    public DescriptorImpl getDescriptor() {
+        return (DescriptorImpl) super.getDescriptor();
+    }
 
     @DataBoundConstructor
     public NotifyEventsPublisher(String token, String message, boolean onSuccess, boolean onUnstable, boolean onFailure, boolean onAborted) {
-        this.token = Secret.fromString(Util.fixEmptyAndTrim(token));
+        this.token   = Secret.fromString(Util.fixEmptyAndTrim(token));
         this.message = Util.fixEmptyAndTrim(message);
 
-        this.onSuccess = onSuccess;
+        this.onSuccess  = onSuccess;
         this.onUnstable = onUnstable;
+        this.onFailure  = onFailure;
+        this.onAborted  = onAborted;
+    }
+
+    public String getToken() {
+        return token.getPlainText();
+    }
+
+    public void setToken(String token) {
+        this.token = Secret.fromString(token);
+    }
+
+    public void setToken(Secret token) {
+        this.token = token;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    public boolean getOnSuccess() {
+        return onSuccess;
+    }
+
+    public void setOnSuccess(boolean onSuccess) {
+        this.onSuccess = onSuccess;
+    }
+
+    public boolean getOnUnstable() {
+        return onUnstable;
+    }
+
+    public void setOnUnstable(boolean onUnstable) {
+        this.onUnstable = onUnstable;
+    }
+
+    public boolean getOnFailure() {
+        return onFailure;
+    }
+
+    public void setOnFailure(boolean onFailure) {
         this.onFailure = onFailure;
+    }
+
+    public boolean getOnAborted() {
+        return onAborted;
+    }
+
+    public void setOnAborted(boolean onAborted) {
         this.onAborted = onAborted;
     }
 
@@ -61,49 +118,82 @@ public class NotifyEventsPublisher extends Notifier implements SimpleBuildStep {
         Result result = run.getResult();
 
         if (((result == Result.SUCCESS) && onSuccess)
-         || ((result == Result.UNSTABLE) && onUnstable)
-         || ((result == Result.FAILURE) && onFailure)
-         || ((result == Result.ABORTED) && onAborted)) {
+                || ((result == Result.UNSTABLE) && onUnstable)
+                || ((result == Result.FAILURE) && onFailure)
+                || ((result == Result.ABORTED) && onAborted)) {
             NotifyEventsSender.getInstance().send(token, result.toString().toLowerCase(), message, run, filePath, taskListener);
         }
     }
 
-    @Override
-    public BuildStepMonitor getRequiredMonitorService() {
-        return BuildStepMonitor.NONE;
-    }
-
-    @Override
-    public NotifyEventsPublisherDescriptor getDescriptor() {
-        return (NotifyEventsPublisherDescriptor) super.getDescriptor();
-    }
-
-    public Secret getToken() {
-        return token;
-    }
-
-    public String getMessage() {
-        return message;
-    }
-
-    public boolean isOnSuccess() {
-        return onSuccess;
-    }
-
-    public boolean isOnUnstable() {
-        return onUnstable;
-    }
-
-    public boolean isOnFailure() {
-        return onFailure;
-    }
-
-    public boolean isOnAborted() {
-        return onAborted;
-    }
-
     @Extension
-    public static class NotifyEventsPublisherDescriptor extends BuildStepDescriptor<Publisher> {
+    public static class DescriptorImpl extends BuildStepDescriptor<Publisher> {
+
+        private Secret token;
+        private String message;
+
+        private boolean onSuccess;
+        private boolean onUnstable;
+        private boolean onFailure;
+        private boolean onAborted;
+
+        public String getToken() {
+            return token.getPlainText();
+        }
+
+        @DataBoundSetter
+        public void setToken(String token) {
+            this.token = Secret.fromString(token);
+        }
+
+        @DataBoundSetter
+        public void setToken(Secret token) {
+            this.token = token;
+        }
+
+        public String getMessage() {
+            return message;
+        }
+
+        @DataBoundSetter
+        public void setMessage(String message) {
+            this.message = message;
+        }
+
+        public boolean getOnSuccess() {
+            return onSuccess;
+        }
+
+        @DataBoundSetter
+        public void setOnSuccess(boolean onSuccess) {
+            this.onSuccess = onSuccess;
+        }
+
+        public boolean getOnUnstable() {
+            return onUnstable;
+        }
+
+        @DataBoundSetter
+        public void setOnUnstable(boolean onUnstable) {
+            this.onUnstable = onUnstable;
+        }
+
+        public boolean getOnFailure() {
+            return onFailure;
+        }
+
+        @DataBoundSetter
+        public void setOnFailure(boolean onFailure) {
+            this.onFailure = onFailure;
+        }
+
+        public boolean getOnAborted() {
+            return onAborted;
+        }
+
+        @DataBoundSetter
+        public void setOnAborted(boolean onAborted) {
+            this.onAborted = onAborted;
+        }
 
         @Override
         public boolean isApplicable(Class<? extends AbstractProject> jobType) {

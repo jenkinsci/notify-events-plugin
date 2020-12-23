@@ -53,3 +53,17 @@ You can find full supported messenger list [here](https://notify.events/en-US/fe
 2. Fill the "Token" (Prepare Notify.Events channel, step 4)
 3. Fill the "Message" (optional)
 4. Fill the "Send when"
+
+#### Pipeline
+```
+notifyEvents message: 'Hello <b>world</b>' token: '01234567890123456789012345678901'
+```
+
+### Formatting
+
+You can use environment variables (including Token-Macro) and simple html-formatting (`<b>`, `<i>`, `<a>` tags).
+
+Example:
+```html
+<b>$BUILD_ID</b> - Built successfully
+```
