@@ -56,7 +56,7 @@ You can find full supported messenger list [here](https://notify.events/en-US/fe
 
 #### Pipeline
 ```
-notifyEvents message: 'Hello <b>world</b>' token: '01234567890123456789012345678901'
+notifyEvents message: 'Hello <b>world</b>', token: '01234567890123456789012345678901'
 ```
 
 ### Formatting
