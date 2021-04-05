@@ -1,19 +1,17 @@
-package events.notify;
+package events.notify.workflow;
 
-import edu.umd.cs.findbugs.annotations.NonNull;
+import com.google.common.collect.ImmutableSet;
+import events.notify.NotifyEventsService;
 import hudson.Extension;
 import hudson.FilePath;
 import hudson.Launcher;
 import hudson.Util;
-import hudson.model.AbstractProject;
 import hudson.model.Run;
 import hudson.model.TaskListener;
-import hudson.tasks.BuildStepDescriptor;
-import hudson.tasks.Builder;
 import hudson.util.FormValidation;
 import hudson.util.ListBoxModel;
 import hudson.util.Secret;
-import jenkins.tasks.SimpleBuildStep;
+import org.jenkinsci.plugins.workflow.steps.*;
 import org.kohsuke.accmod.Restricted;
 import org.kohsuke.accmod.restrictions.NoExternalUse;
 import org.kohsuke.stapler.DataBoundConstructor;
@@ -21,10 +19,11 @@ import org.kohsuke.stapler.DataBoundSetter;
 import org.kohsuke.stapler.QueryParameter;
 
 import javax.annotation.Nonnull;
-import java.io.IOException;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 
-public class NotifyEventsBuilder extends Builder implements SimpleBuildStep {
+public class NotifyEventsStep extends Step {
 
     private Secret token;
     private String title;
@@ -32,39 +31,16 @@ public class NotifyEventsBuilder extends Builder implements SimpleBuildStep {
     private String priority;
     private String level;
 
-    @Override
-    public DescriptorImpl getDescriptor() {
-        return (DescriptorImpl) super.getDescriptor();
-    }
-
-    @DataBoundConstructor
-    public NotifyEventsBuilder(final String token, final String title, final String message, final String priority, final String level) {
-        this.token    = Secret.fromString(Util.fixEmptyAndTrim(token));
-        this.title    = Util.fixEmptyAndTrim(title);
-        this.message  = Util.fixEmptyAndTrim(message);
-        this.priority = Util.fixEmptyAndTrim(priority);
-        this.level    = Util.fixEmptyAndTrim(level);
-    }
-
-    // Backward compatible with version prior 1.4.0
-    public NotifyEventsBuilder(final String token, final String message) {
-        this(token, DescriptorImpl.DEFAULT_TITLE, message, DescriptorImpl.DEFAULT_PRIORITY, DescriptorImpl.DEFAULT_LEVEL);
-    }
-
-    public NotifyEventsBuilder() {
-        this.title    = DescriptorImpl.DEFAULT_TITLE;
-        this.priority = DescriptorImpl.DEFAULT_PRIORITY;
-        this.level    = DescriptorImpl.DEFAULT_LEVEL;
-    }
-
     public String getToken() {
         return token.getPlainText();
     }
 
+    @DataBoundSetter
     public void setToken(final String token) {
         this.token = Secret.fromString(token);
     }
 
+    @DataBoundSetter
     public void setToken(final Secret token) {
         this.token = token;
     }
@@ -73,6 +49,7 @@ public class NotifyEventsBuilder extends Builder implements SimpleBuildStep {
         return title;
     }
 
+    @DataBoundSetter
     public void setTitle(final String title) {
         this.title = title;
     }
@@ -81,6 +58,7 @@ public class NotifyEventsBuilder extends Builder implements SimpleBuildStep {
         return message;
     }
 
+    @DataBoundSetter
     public void setMessage(final String message) {
         this.message = message;
     }
@@ -89,6 +67,7 @@ public class NotifyEventsBuilder extends Builder implements SimpleBuildStep {
         return priority;
     }
 
+    @DataBoundSetter
     public void setPriority(final String priority) {
         this.priority = priority;
     }
@@ -97,21 +76,27 @@ public class NotifyEventsBuilder extends Builder implements SimpleBuildStep {
         return level;
     }
 
+    @DataBoundSetter
     public void setLevel(final String level) {
         this.level = level;
     }
 
+    @DataBoundConstructor
+    public NotifyEventsStep() {
+    }
+
     @Override
-    public void perform(
-            @Nonnull Run<?, ?> run,
-            @Nonnull FilePath filePath,
-            @Nonnull Launcher launcher,
-            @Nonnull TaskListener taskListener) throws InterruptedException, IOException {
-        NotifyEventsService.getInstance().send(token, title, message, priority, level, run, filePath, launcher, taskListener, null);
+    public NotifyEventsStep.DescriptorImpl getDescriptor() {
+        return (NotifyEventsStep.DescriptorImpl) super.getDescriptor();
+    }
+
+    @Override
+    public StepExecution start(StepContext context) {
+        return new NotifyEventsStepExecution(this, context);
     }
 
     @Extension
-    public static class DescriptorImpl extends BuildStepDescriptor<Builder> {
+    public static class DescriptorImpl extends StepDescriptor {
 
         public final static String DEFAULT_TITLE    = "$BUILD_TAG - Message";
         public final static String DEFAULT_MESSAGE  = "";
@@ -142,7 +127,7 @@ public class NotifyEventsBuilder extends Builder implements SimpleBuildStep {
             this.token = token;
         }
 
-        public FormValidation doCheckToken(@QueryParameter final String value) {
+        public FormValidation doCheckToken(@QueryParameter String value) {
             if (Util.fixEmptyAndTrim(value) == null) {
                 return FormValidation.error("Token can't be empty");
             }
@@ -184,7 +169,7 @@ public class NotifyEventsBuilder extends Builder implements SimpleBuildStep {
             this.message = message;
         }
 
-        public FormValidation doCheckMessage(@QueryParameter final String value) {
+        public FormValidation doCheckMessage(@QueryParameter String value) {
             if (Util.fixEmptyAndTrim(value) == null) {
                 return FormValidation.error("Message can't be empty");
             }
@@ -206,7 +191,7 @@ public class NotifyEventsBuilder extends Builder implements SimpleBuildStep {
         }
 
         @Restricted(NoExternalUse.class)
-        public ListBoxModel doFillPriorityItems(@QueryParameter("priority") final String priority) {
+        public ListBoxModel doFillPriorityItems(@QueryParameter("priority") String priority) {
             ListBoxModel list = new ListBoxModel();
 
             for (Map.Entry<String, String> entry : NotifyEventsService.getPriorities().entrySet()) {
@@ -245,7 +230,7 @@ public class NotifyEventsBuilder extends Builder implements SimpleBuildStep {
             this.level = level;
         }
 
-        public ListBoxModel doFillLevelItems(@QueryParameter("level") String level) {
+        public ListBoxModel doFillLevelItems(@QueryParameter("level") final String level) {
             ListBoxModel list = new ListBoxModel();
 
             for (Map.Entry<String, String> entry : NotifyEventsService.getLevels().entrySet()) {
@@ -259,7 +244,7 @@ public class NotifyEventsBuilder extends Builder implements SimpleBuildStep {
             return list;
         }
 
-        public FormValidation doCheckLevel(@QueryParameter String value) {
+        public FormValidation doCheckLevel(@QueryParameter final String value) {
             if (Util.fixEmptyAndTrim(value) == null) {
                 return FormValidation.error("Level can't be empty");
             }
@@ -274,14 +259,51 @@ public class NotifyEventsBuilder extends Builder implements SimpleBuildStep {
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         @Override
-        public boolean isApplicable(Class<? extends AbstractProject> jobType) {
-            return true;
+        public Set<? extends Class<?>> getRequiredContext() {
+            return ImmutableSet.of(Run.class, TaskListener.class);
         }
 
         @Override
-        @NonNull
+        public String getFunctionName() {
+            return "notifyEvents";
+        }
+
+        @Nonnull
+        @Override
         public String getDisplayName() {
-            return NotifyEventsService.NOTIFY_EVENTS_DISPLAY_NAME;
+            return "Send notification";
+        }
+    }
+
+    public static class NotifyEventsStepExecution extends SynchronousNonBlockingStepExecution<Void> {
+
+        private static final long serialVersionUID = 1L;
+
+        private transient final NotifyEventsStep step;
+
+        NotifyEventsStepExecution(NotifyEventsStep step, StepContext context) {
+            super(context);
+
+            this.step = step;
+        }
+
+        @Override
+        protected Void run() throws Exception {
+            final Run<?, ?> run = getContext().get(Run.class);
+            Objects.requireNonNull(run, "Run is mandatory here");
+
+            final FilePath workspace = getContext().get(FilePath.class);
+            Objects.requireNonNull(workspace, "FilePath is mandatory here");
+
+            final Launcher launcher = getContext().get(Launcher.class);
+            Objects.requireNonNull(launcher, "Launcher is mandatory here");
+
+            final TaskListener listener = getContext().get(TaskListener.class);
+            Objects.requireNonNull(listener, "Listener is mandatory here");
+
+            NotifyEventsService.getInstance().send(step.token, step.title, step.message, step.priority, step.level, run, workspace, launcher, listener, null);
+
+            return null;
         }
     }
 }

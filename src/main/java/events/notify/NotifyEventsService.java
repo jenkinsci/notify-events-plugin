@@ -1,0 +1,176 @@
+package events.notify;
+
+import com.google.common.base.Strings;
+import hudson.FilePath;
+import hudson.Launcher;
+import hudson.Util;
+import hudson.model.Result;
+import hudson.model.Run;
+import hudson.model.TaskListener;
+import hudson.util.Secret;
+import okhttp3.*;
+import org.jenkinsci.plugins.tokenmacro.TokenMacro;
+import org.json.simple.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+public class NotifyEventsService {
+
+    public final static String NOTIFY_EVENTS_DISPLAY_NAME = "Notify.Events";
+
+    private final static String BASE_URL = "https://notify.events/api/v1/channel/source/%s/execute";
+
+    public final static String PRIORITY_LOWEST  = "lowest";
+    public final static String PRIORITY_LOW     = "low";
+    public final static String PRIORITY_NORMAL  = "normal";
+    public final static String PRIORITY_HIGH    = "high";
+    public final static String PRIORITY_HIGHEST = "highest";
+
+    public final static String LEVEL_VERBOSE = "verbose";
+    public final static String LEVEL_INFO    = "info";
+    public final static String LEVEL_NOTICE  = "notice";
+    public final static String LEVEL_WARNING = "warning";
+    public final static String LEVEL_ERROR   = "error";
+    public final static String LEVEL_SUCCESS = "success";
+
+    public static Map<String, String> getPriorities() {
+        Map<String, String> map = new HashMap<String, String>();
+
+        map.put(PRIORITY_LOWEST,  "Lowest");
+        map.put(PRIORITY_LOW,     "Low");
+        map.put(PRIORITY_NORMAL,  "Normal");
+        map.put(PRIORITY_HIGH,    "High");
+        map.put(PRIORITY_HIGHEST, "Highest");
+
+        return map;
+    }
+
+    public static Map<String, String> getLevels() {
+        Map<String, String> map = new HashMap<String, String>();
+
+        map.put(LEVEL_VERBOSE, "Verbose");
+        map.put(LEVEL_INFO,    "Info");
+        map.put(LEVEL_NOTICE,  "Notice");
+        map.put(LEVEL_WARNING, "Warning");
+        map.put(LEVEL_ERROR,   "Error");
+        map.put(LEVEL_SUCCESS, "Success");
+
+        return map;
+    }
+
+    private static final Logger logger = LoggerFactory.getLogger(NotifyEventsService.class.getName());
+
+    private static final MediaType JSON_MEDIA_TYPE = MediaType.parse("application/json; charset=utf-8");
+
+    private static NotifyEventsService instance;
+
+    private final OkHttpClient client;
+
+    public NotifyEventsService() {
+        client = new OkHttpClient();
+    }
+
+    public synchronized static NotifyEventsService getInstance() {
+        if (instance == null) {
+            instance = new NotifyEventsService();
+        }
+
+        return instance;
+    }
+
+    public void send(Secret token, String title, String message, String priority, String level, Run<?, ?> run, FilePath workspace, Launcher launcher, TaskListener listener, List<TokenMacro> privateTokens) {
+        String plainToken = token.getPlainText();
+
+        title    = Util.fixNull(title);
+        message  = Util.fixNull(message);
+        priority = Util.fixNull(priority);
+        level    = Util.fixNull(level);
+
+        try {
+            plainToken = TokenMacro.expandAll(run, workspace, listener, plainToken, true, privateTokens);
+            title      = TokenMacro.expandAll(run, workspace, listener, title, true, privateTokens);
+            message    = TokenMacro.expandAll(run, workspace, listener, message, true, privateTokens);
+        } catch (Exception e) {
+            listener.error(String.format("Error evaluating token: %s", e.getMessage()));
+            run.setResult(Result.FAILURE);
+
+            return;
+        }
+
+        if (Strings.isNullOrEmpty(plainToken) || (plainToken.length() != 32)) {
+            listener.error("Invalid token");
+            run.setResult(Result.FAILURE);
+
+            return;
+        }
+
+        if (title.isEmpty()) {
+            title = "$BUILD_TAG - Message";
+        }
+
+        if (message.isEmpty()) {
+            listener.error("Message can't be empty");
+            run.setResult(Result.FAILURE);
+
+            return;
+        }
+
+        // Backward compatible with version prior 1.4.0
+        if (priority.isEmpty()) {
+            priority = PRIORITY_NORMAL;
+        }
+
+        if (!NotifyEventsService.getPriorities().containsKey(priority)) {
+            listener.error("Priority invalid value");
+            run.setResult(Result.FAILURE);
+
+            return;
+        }
+
+        // Backward compatible with version prior 1.4.0
+        if (level.isEmpty()) {
+            level = LEVEL_INFO;
+        }
+
+        if (!NotifyEventsService.getLevels().containsKey(level)) {
+            listener.error("Level invalid value");
+            run.setResult(Result.FAILURE);
+
+            return;
+        }
+
+        JSONObject json = new JSONObject();
+
+        json.put("title",    title);
+        json.put("message",  message);
+        json.put("priority", priority);
+        json.put("level",    level);
+
+        RequestBody body = RequestBody.create(JSON_MEDIA_TYPE, json.toJSONString());
+
+        String url = String.format(BASE_URL, plainToken);
+
+        Request request = new Request.Builder().url(url).post(body).build();
+
+        try {
+            Response response = client.newCall(request).execute();
+
+            if (response.code() != 200) {
+                throw new Exception(String.format("Invalid response code: %d", response.code()));
+            }
+
+            response.close();
+
+            logger.info(String.format("Send message to channel: %s...", plainToken.substring(0, 6)));
+            listener.getLogger().printf("Send message to channel: %s...%n", plainToken.substring(0, 6));
+
+            logger.debug(String.format("Invocation of request '%s' successful", url));
+        } catch (Exception e) {
+            logger.error(String.format("Invocation of request '%s' failed", url), e);
+        }
+    }
+}

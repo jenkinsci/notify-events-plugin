@@ -1,27 +1,118 @@
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
     <f:entry title="Token" field="token">
-        <f:textbox maxlength="32" />
+        <f:textbox />
+    </f:entry>
+    <f:entry title="Title" field="title">
+        <f:textbox default="${descriptor.DEFAULT_TITLE}" maxlength="255" />
     </f:entry>
     <f:entry title="Message" field="message">
-        <f:textarea />
+        <f:textarea default="${descriptor.DEFAULT_MESSAGE}" />
     </f:entry>
-    <f:advanced>
-        <f:entry title="Send when">
-            <table>
-                <f:entry>
-                    <f:checkbox title="Success" field="onSuccess" default="true" />
-                </f:entry>
-                <f:entry>
-                    <f:checkbox title="Unstable" field="onUnstable" default="true" />
-                </f:entry>
-                <f:entry>
-                    <f:checkbox title="Failed" field="onFailure" default="true" />
-                </f:entry>
-                <f:entry>
-                    <f:checkbox title="Aborted" field="onAborted" default="true" />
-                </f:entry>
-            </table>
-        </f:entry>
-    </f:advanced>
+    <f:entry title="Send when">
+        <table>
+
+            <f:optionalBlock title="Success" field="onSuccess" inline="true">
+                <f:optionalBlock title="Custom Success notification" field="onSuccessCustom" inline="true">
+                    <div class="row">
+                        <div class="col-xs-24 col-sm-24 col-md-12">
+                            <f:entry title="Title" field="onSuccessCustomTitle">
+                                <f:textbox default="${descriptor.DEFAULT_ON_SUCCESS_TITLE}" maxlength="255" />
+                            </f:entry>
+                        </div>
+                        <div class="col-xs-24 col-sm-12 col-md-6">
+                            <f:entry title="Priority" field="onSuccessCustomPriority" class="col-sm-12 col-md-4">
+                                <f:select default="${descriptor.DEFAULT_ON_SUCCESS_PRIORITY}" />
+                            </f:entry>
+                        </div>
+                        <div class="col-xs-24 col-sm-12 col-md-6">
+                            <f:entry title="Level" field="onSuccessCustomLevel" class="col-sm-12 col-md-4">
+                                <f:select default="${descriptor.DEFAULT_ON_SUCCESS_LEVEL}" />
+                            </f:entry>
+                        </div>
+                    </div>
+                    <f:entry title="Message" field="onSuccessCustomMessage">
+                        <f:textarea default="${descriptor.DEFAULT_ON_SUCCESS_MESSAGE}" />
+                    </f:entry>
+                </f:optionalBlock>
+            </f:optionalBlock>
+
+            <f:optionalBlock title="Unstable" field="onUnstable" inline="true">
+                <f:optionalBlock title="Custom Unstable notification" field="onUnstableCustom" inline="true">
+                    <div class="row">
+                        <div class="col-xs-24 col-sm-24 col-md-12">
+                            <f:entry title="Title" field="onUnstableCustomTitle">
+                                <f:textbox default="${descriptor.DEFAULT_ON_UNSTABLE_TITLE}" maxlength="255" />
+                            </f:entry>
+                        </div>
+                        <div class="col-xs-24 col-sm-12 col-md-6">
+                            <f:entry title="Priority" field="onUnstableCustomPriority" class="col-sm-12 col-md-4">
+                                <f:select default="${descriptor.DEFAULT_ON_UNSTABLE_PRIORITY}" />
+                            </f:entry>
+                        </div>
+                        <div class="col-xs-24 col-sm-12 col-md-6">
+                            <f:entry title="Level" field="onUnstableCustomLevel" class="col-sm-12 col-md-4">
+                                <f:select default="${descriptor.DEFAULT_ON_UNSTABLE_LEVEL}" />
+                            </f:entry>
+                        </div>
+                    </div>
+                    <f:entry title="Message" field="onUnstableCustomMessage">
+                        <f:textarea default="${descriptor.DEFAULT_ON_UNSTABLE_MESSAGE}" />
+                    </f:entry>
+                </f:optionalBlock>
+            </f:optionalBlock>
+
+            <f:optionalBlock title="Failure" field="onFailure" inline="true">
+                <f:optionalBlock title="Custom Failure notification" field="onFailureCustom" inline="true">
+                    <div class="row">
+                        <div class="col-xs-24 col-sm-24 col-md-12">
+                            <f:entry title="Title" field="onFailureCustomTitle">
+                                <f:textbox default="${descriptor.DEFAULT_ON_FAILURE_TITLE}" maxlength="255" />
+                            </f:entry>
+                        </div>
+                        <div class="col-xs-24 col-sm-12 col-md-6">
+                            <f:entry title="Priority" field="onFailureCustomPriority" class="col-sm-12 col-md-4">
+                                <f:select default="${descriptor.DEFAULT_ON_FAILURE_PRIORITY}" />
+                            </f:entry>
+                        </div>
+                        <div class="col-xs-24 col-sm-12 col-md-6">
+                            <f:entry title="Level" field="onFailureCustomLevel" class="col-sm-12 col-md-4">
+                                <f:select default="${descriptor.DEFAULT_ON_FAILURE_LEVEL}" />
+                            </f:entry>
+                        </div>
+                    </div>
+                    <f:entry title="Message" field="onFailureCustomMessage">
+                        <f:textarea default="${descriptor.DEFAULT_ON_FAILURE_MESSAGE}" />
+                    </f:entry>
+                </f:optionalBlock>
+            </f:optionalBlock>
+
+            <f:optionalBlock title="Aborted" field="onAborted" inline="true">
+                <f:optionalBlock title="Custom Aborted notification" field="onAbortedCustom" inline="true">
+                    <div class="row">
+                        <div class="col-xs-24 col-sm-24 col-md-12">
+                            <f:entry title="Title" field="onAbortedCustomTitle">
+                                <f:textbox default="${descriptor.DEFAULT_ON_ABORTED_TITLE}" maxlength="255" />
+                            </f:entry>
+                        </div>
+                        <div class="col-xs-24 col-sm-12 col-md-6">
+                            <f:entry title="Priority" field="onAbortedCustomPriority" class="col-sm-12 col-md-4">
+                                <f:select default="${descriptor.DEFAULT_ON_ABORTED_PRIORITY}" />
+                            </f:entry>
+                        </div>
+                        <div class="col-xs-24 col-sm-12 col-md-6">
+                            <f:entry title="Level" field="onAbortedCustomLevel" class="col-sm-12 col-md-4">
+                                <f:select default="${descriptor.DEFAULT_ON_ABORTED_LEVEL}" />
+                            </f:entry>
+                        </div>
+                    </div>
+                    <f:entry title="Message" field="onAbortedCustomMessage">
+                        <f:textarea default="${descriptor.DEFAULT_ON_ABORTED_MESSAGE}" />
+                    </f:entry>
+                </f:optionalBlock>
+            </f:optionalBlock>
+
+        </table>
+    </f:entry>
+
 </j:jelly>
