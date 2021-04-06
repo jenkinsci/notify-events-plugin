@@ -31,6 +31,7 @@ public class NotifyEventsPublisher extends Notifier implements SimpleBuildStep {
     private Secret token;
     private String title;
     private String message;
+    private String attachment;
 
     private boolean onSuccess;
     private boolean onSuccessCustom;
@@ -38,6 +39,7 @@ public class NotifyEventsPublisher extends Notifier implements SimpleBuildStep {
     private String  onSuccessCustomMessage;
     private String  onSuccessCustomPriority;
     private String  onSuccessCustomLevel;
+    private String  onSuccessCustomAttachment;
 
     private boolean onUnstable;
     private boolean onUnstableCustom;
@@ -45,6 +47,7 @@ public class NotifyEventsPublisher extends Notifier implements SimpleBuildStep {
     private String  onUnstableCustomMessage;
     private String  onUnstableCustomPriority;
     private String  onUnstableCustomLevel;
+    private String  onUnstableCustomAttachment;
     
     private boolean onFailure;
     private boolean onFailureCustom;
@@ -52,6 +55,7 @@ public class NotifyEventsPublisher extends Notifier implements SimpleBuildStep {
     private String  onFailureCustomMessage;
     private String  onFailureCustomPriority;
     private String  onFailureCustomLevel;
+    private String  onFailureCustomAttachment;
 
     private boolean onAborted;
     private boolean onAbortedCustom;
@@ -59,6 +63,7 @@ public class NotifyEventsPublisher extends Notifier implements SimpleBuildStep {
     private String  onAbortedCustomMessage;
     private String  onAbortedCustomPriority;
     private String  onAbortedCustomLevel;
+    private String  onAbortedCustomAttachment;
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     /// Token
@@ -98,6 +103,18 @@ public class NotifyEventsPublisher extends Notifier implements SimpleBuildStep {
 
     public void setMessage(final String message) {
         this.message = message;
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// Attachment
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    public String getAttachment() {
+        return attachment;
+    }
+
+    public void setAttachment(final String attachment) {
+        this.attachment = attachment;
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -156,6 +173,14 @@ public class NotifyEventsPublisher extends Notifier implements SimpleBuildStep {
         this.onSuccessCustomLevel = level;
     }
 
+    public String getOnSuccessCustomAttachment() {
+        return onSuccessCustomAttachment;
+    }
+
+    public void setOnSuccessCustomAttachment(final String attachment) {
+        this.onSuccessCustomAttachment = attachment;
+    }
+
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     /// OnUnstable
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -210,6 +235,14 @@ public class NotifyEventsPublisher extends Notifier implements SimpleBuildStep {
 
     public void setOnUnstableCustomLevel(final String level) {
         this.onUnstableCustomLevel = level;
+    }
+
+    public String getOnUnstableCustomAttachment() {
+        return onSuccessCustomAttachment;
+    }
+
+    public void setOnUnstableCustomAttachment(final String attachment) {
+        this.onSuccessCustomAttachment = attachment;
     }
     
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -267,6 +300,14 @@ public class NotifyEventsPublisher extends Notifier implements SimpleBuildStep {
     public void setOnFailureCustomLevel(final String level) {
         this.onFailureCustomLevel = level;
     }
+
+    public String getOnFailureCustomAttachment() {
+        return onSuccessCustomAttachment;
+    }
+
+    public void setOnFailureCustomAttachment(final String attachment) {
+        this.onSuccessCustomAttachment = attachment;
+    }
     
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     /// OnAborted
@@ -323,6 +364,14 @@ public class NotifyEventsPublisher extends Notifier implements SimpleBuildStep {
     public void setOnAbortedCustomLevel(final String level) {
         this.onAbortedCustomLevel = level;
     }
+
+    public String getOnAbortedCustomAttachment() {
+        return onSuccessCustomAttachment;
+    }
+
+    public void setOnAbortedCustomAttachment(final String attachment) {
+        this.onSuccessCustomAttachment = attachment;
+    }
     
     @Override
     public DescriptorImpl getDescriptor() {
@@ -332,41 +381,46 @@ public class NotifyEventsPublisher extends Notifier implements SimpleBuildStep {
     @DataBoundConstructor
     public NotifyEventsPublisher(
             final String token, final String title, final String message,
-            final boolean onSuccess, final boolean onSuccessCustom, final String onSuccessCustomTitle, final String onSuccessCustomMessage, final String onSuccessCustomPriority, final String onSuccessCustomLevel,
-            final boolean onUnstable, final boolean onUnstableCustom, final String onUnstableCustomTitle, final String onUnstableCustomMessage, final String onUnstableCustomPriority, final String onUnstableCustomLevel,
-            final boolean onFailure, final boolean onFailureCustom, final String onFailureCustomTitle, final String onFailureCustomMessage, final String onFailureCustomPriority, final String onFailureCustomLevel,
-            final boolean onAborted, final boolean onAbortedCustom, final String onAbortedCustomTitle, final String onAbortedCustomMessage, final String onAbortedCustomPriority, final String onAbortedCustomLevel) {
-        this.token   = Secret.fromString(Util.fixEmptyAndTrim(token));
-        this.title   = Util.fixNull(title);
-        this.message = Util.fixNull(message);
+            final boolean onSuccess, final boolean onSuccessCustom, final String onSuccessCustomTitle, final String onSuccessCustomMessage, final String onSuccessCustomPriority, final String onSuccessCustomLevel, final String onSuccessCustomAttachment,
+            final boolean onUnstable, final boolean onUnstableCustom, final String onUnstableCustomTitle, final String onUnstableCustomMessage, final String onUnstableCustomPriority, final String onUnstableCustomLevel, final String onUnstableCustomAttachment,
+            final boolean onFailure, final boolean onFailureCustom, final String onFailureCustomTitle, final String onFailureCustomMessage, final String onFailureCustomPriority, final String onFailureCustomLevel, final String onFailureCustomAttachment,
+            final boolean onAborted, final boolean onAbortedCustom, final String onAbortedCustomTitle, final String onAbortedCustomMessage, final String onAbortedCustomPriority, final String onAbortedCustomLevel, final String onAbortedCustomAttachment) {
+        this.token      = Secret.fromString(Util.fixEmptyAndTrim(token));
+        this.title      = Util.fixNull(title);
+        this.message    = Util.fixNull(message);
+        this.attachment = Util.fixNull(attachment);
 
-        this.onSuccess               = onSuccess;
-        this.onSuccessCustom         = onSuccessCustom;
-        this.onSuccessCustomTitle    = Util.fixNull(onSuccessCustomTitle);
-        this.onSuccessCustomMessage  = Util.fixNull(onSuccessCustomMessage);
-        this.onSuccessCustomPriority = Util.fixNull(onSuccessCustomPriority);
-        this.onSuccessCustomLevel    = Util.fixNull(onSuccessCustomLevel);
+        this.onSuccess                 = onSuccess;
+        this.onSuccessCustom           = onSuccessCustom;
+        this.onSuccessCustomTitle      = Util.fixNull(onSuccessCustomTitle);
+        this.onSuccessCustomMessage    = Util.fixNull(onSuccessCustomMessage);
+        this.onSuccessCustomPriority   = Util.fixNull(onSuccessCustomPriority);
+        this.onSuccessCustomLevel      = Util.fixNull(onSuccessCustomLevel);
+        this.onSuccessCustomAttachment = Util.fixNull(onSuccessCustomAttachment);
 
-        this.onUnstable               = onUnstable;
-        this.onUnstableCustom         = onUnstableCustom;
-        this.onUnstableCustomTitle    = Util.fixNull(onUnstableCustomTitle);
-        this.onUnstableCustomMessage  = Util.fixNull(onUnstableCustomMessage);
-        this.onUnstableCustomPriority = Util.fixNull(onUnstableCustomPriority);
-        this.onUnstableCustomLevel    = Util.fixNull(onUnstableCustomLevel);
+        this.onUnstable                 = onUnstable;
+        this.onUnstableCustom           = onUnstableCustom;
+        this.onUnstableCustomTitle      = Util.fixNull(onUnstableCustomTitle);
+        this.onUnstableCustomMessage    = Util.fixNull(onUnstableCustomMessage);
+        this.onUnstableCustomPriority   = Util.fixNull(onUnstableCustomPriority);
+        this.onUnstableCustomLevel      = Util.fixNull(onUnstableCustomLevel);
+        this.onUnstableCustomAttachment = Util.fixNull(onUnstableCustomAttachment);
 
-        this.onFailure               = onFailure;
-        this.onFailureCustom         = onFailureCustom;
-        this.onFailureCustomTitle    = Util.fixNull(onFailureCustomTitle);
-        this.onFailureCustomMessage  = Util.fixNull(onFailureCustomMessage);
-        this.onFailureCustomPriority = Util.fixNull(onFailureCustomPriority);
-        this.onFailureCustomLevel    = Util.fixNull(onFailureCustomLevel);
+        this.onFailure                 = onFailure;
+        this.onFailureCustom           = onFailureCustom;
+        this.onFailureCustomTitle      = Util.fixNull(onFailureCustomTitle);
+        this.onFailureCustomMessage    = Util.fixNull(onFailureCustomMessage);
+        this.onFailureCustomPriority   = Util.fixNull(onFailureCustomPriority);
+        this.onFailureCustomLevel      = Util.fixNull(onFailureCustomLevel);
+        this.onFailureCustomAttachment = Util.fixNull(onFailureCustomAttachment);
 
-        this.onAborted               = onAborted;
-        this.onAbortedCustom         = onAbortedCustom;
-        this.onAbortedCustomTitle    = Util.fixNull(onAbortedCustomTitle);
-        this.onAbortedCustomMessage  = Util.fixNull(onAbortedCustomMessage);
-        this.onAbortedCustomPriority = Util.fixNull(onAbortedCustomPriority);
-        this.onAbortedCustomLevel    = Util.fixNull(onAbortedCustomLevel);
+        this.onAborted                 = onAborted;
+        this.onAbortedCustom           = onAbortedCustom;
+        this.onAbortedCustomTitle      = Util.fixNull(onAbortedCustomTitle);
+        this.onAbortedCustomMessage    = Util.fixNull(onAbortedCustomMessage);
+        this.onAbortedCustomPriority   = Util.fixNull(onAbortedCustomPriority);
+        this.onAbortedCustomLevel      = Util.fixNull(onAbortedCustomLevel);
+        this.onAbortedCustomAttachment = Util.fixNull(onAbortedCustomAttachment);
     }
 
     @Override
@@ -385,55 +439,60 @@ public class NotifyEventsPublisher extends Notifier implements SimpleBuildStep {
             return;
         }
 
-        String title   = this.title;
-        String message = this.message;
+        String title      = this.title;
+        String message    = this.message;
+        String attachment = this.attachment;
 
         String priority;
         String level;
 
         if ((result == Result.SUCCESS) && onSuccess) {
             if (onSuccessCustom) {
-                title    = onSuccessCustomTitle;
-                message  = onSuccessCustomMessage;
-                priority = onSuccessCustomPriority;
-                level    = onSuccessCustomLevel;
+                title      = onSuccessCustomTitle;
+                message    = onSuccessCustomMessage;
+                priority   = onSuccessCustomPriority;
+                level      = onSuccessCustomLevel;
+                attachment = onSuccessCustomAttachment;
             } else {
                 priority = NotifyEventsService.PRIORITY_NORMAL;
                 level    = NotifyEventsService.LEVEL_SUCCESS;
             }
         } else if ((result == Result.UNSTABLE) && onUnstable) {
             if (onUnstableCustom) {
-                title    = onUnstableCustomTitle;
-                message  = onUnstableCustomMessage;
-                priority = onUnstableCustomPriority;
-                level    = onUnstableCustomLevel;
+                title      = onUnstableCustomTitle;
+                message    = onUnstableCustomMessage;
+                priority   = onUnstableCustomPriority;
+                level      = onUnstableCustomLevel;
+                attachment = onUnstableCustomAttachment;
             } else {
                 priority = NotifyEventsService.PRIORITY_HIGH;
                 level    = NotifyEventsService.LEVEL_WARNING;
             }
         } else if ((result == Result.FAILURE) && onFailure) {
             if (onFailureCustom) {
-                title    = onFailureCustomTitle;
-                message  = onFailureCustomMessage;
-                priority = onFailureCustomPriority;
-                level    = onFailureCustomLevel;
+                title      = onFailureCustomTitle;
+                message    = onFailureCustomMessage;
+                priority   = onFailureCustomPriority;
+                level      = onFailureCustomLevel;
+                attachment = onFailureCustomAttachment;
             } else {
                 priority = NotifyEventsService.PRIORITY_HIGHEST;
                 level    = NotifyEventsService.LEVEL_ERROR;
             }
         } else /*if ((result == Result.ABORTED) && onAborted)*/ {
             if (onAbortedCustom) {
-                title    = onAbortedCustomTitle;
-                message  = onAbortedCustomMessage;
-                priority = onAbortedCustomPriority;
-                level    = onAbortedCustomLevel;
+                title      = onAbortedCustomTitle;
+                message    = onAbortedCustomMessage;
+                priority   = onAbortedCustomPriority;
+                level      = onAbortedCustomLevel;
+                attachment = onAbortedCustomAttachment;
             } else {
                 priority = NotifyEventsService.PRIORITY_NORMAL;
                 level    = NotifyEventsService.LEVEL_INFO;
             }
         }
 
-        NotifyEventsService.getInstance().send(token, title, message, priority, level, run, filePath, launcher, taskListener, null);
+        NotifyEventsService.getInstance().send(token, title, message, priority, level, attachment, run, filePath, launcher, taskListener, null);
     }
 
     @Extension
@@ -441,30 +500,36 @@ public class NotifyEventsPublisher extends Notifier implements SimpleBuildStep {
 
         public static final String DEFAULT_TITLE                = "$PROJECT_NAME: #$BUILD_NUMBER - $BUILD_STATUS";
         public static final String DEFAULT_MESSAGE              = "Build <a href=\"$PROJECT_URL\">$PROJECT_NAME</a>: #<a href=\"$BUILD_URL\">$BUILD_NUMBER</a> result with status: <b>$BUILD_STATUS</b>\n\n<a href=\"$BUILD_URL/console\">Build log</a>";
+        public static final String DEFAULT_ATTACHMENT           = "";
 
-        public static final String DEFAULT_ON_SUCCESS_TITLE     = "$PROJECT_NAME: #$BUILD_NUMBER - $BUILD_STATUS";
-        public static final String DEFAULT_ON_SUCCESS_MESSAGE   = "Build <a href=\"$PROJECT_URL\">$PROJECT_NAME</a>: #<a href=\"$BUILD_URL\">$BUILD_NUMBER</a> result with status: <b>$BUILD_STATUS</b>\n\n<a href=\"$BUILD_URL/console\">Build log</a>";
-        public static final String DEFAULT_ON_SUCCESS_PRIORITY  = NotifyEventsService.PRIORITY_NORMAL;
-        public static final String DEFAULT_ON_SUCCESS_LEVEL     = NotifyEventsService.LEVEL_SUCCESS;
+        public static final String DEFAULT_ON_SUCCESS_TITLE      = "$PROJECT_NAME: #$BUILD_NUMBER - $BUILD_STATUS";
+        public static final String DEFAULT_ON_SUCCESS_MESSAGE    = "Build <a href=\"$PROJECT_URL\">$PROJECT_NAME</a>: #<a href=\"$BUILD_URL\">$BUILD_NUMBER</a> result with status: <b>$BUILD_STATUS</b>\n\n<a href=\"$BUILD_URL/console\">Build log</a>";
+        public static final String DEFAULT_ON_SUCCESS_PRIORITY   = NotifyEventsService.PRIORITY_NORMAL;
+        public static final String DEFAULT_ON_SUCCESS_LEVEL      = NotifyEventsService.LEVEL_SUCCESS;
+        public static final String DEFAULT_ON_SUCCESS_ATTACHMENT = "";
 
-        public static final String DEFAULT_ON_UNSTABLE_TITLE    = "$PROJECT_NAME: #$BUILD_NUMBER - $BUILD_STATUS";
-        public static final String DEFAULT_ON_UNSTABLE_MESSAGE  = "Build <a href=\"$PROJECT_URL\">$PROJECT_NAME</a>: #<a href=\"$BUILD_URL\">$BUILD_NUMBER</a> result with status: <b>$BUILD_STATUS</b>\n\n<a href=\"$BUILD_URL/console\">Build log</a>";
-        public static final String DEFAULT_ON_UNSTABLE_PRIORITY = NotifyEventsService.PRIORITY_HIGH;
-        public static final String DEFAULT_ON_UNSTABLE_LEVEL    = NotifyEventsService.LEVEL_WARNING;
+        public static final String DEFAULT_ON_UNSTABLE_TITLE      = "$PROJECT_NAME: #$BUILD_NUMBER - $BUILD_STATUS";
+        public static final String DEFAULT_ON_UNSTABLE_MESSAGE    = "Build <a href=\"$PROJECT_URL\">$PROJECT_NAME</a>: #<a href=\"$BUILD_URL\">$BUILD_NUMBER</a> result with status: <b>$BUILD_STATUS</b>\n\n<a href=\"$BUILD_URL/console\">Build log</a>";
+        public static final String DEFAULT_ON_UNSTABLE_PRIORITY   = NotifyEventsService.PRIORITY_HIGH;
+        public static final String DEFAULT_ON_UNSTABLE_LEVEL      = NotifyEventsService.LEVEL_WARNING;
+        public static final String DEFAULT_ON_UNSTABLE_ATTACHMENT = "";
 
-        public static final String DEFAULT_ON_FAILURE_TITLE     = "$PROJECT_NAME: #$BUILD_NUMBER - $BUILD_STATUS";
-        public static final String DEFAULT_ON_FAILURE_MESSAGE   = "Build <a href=\"$PROJECT_URL\">$PROJECT_NAME</a>: #<a href=\"$BUILD_URL\">$BUILD_NUMBER</a> result with status: <b>$BUILD_STATUS</b>\n\n<a href=\"$BUILD_URL/console\">Build log</a>";
-        public static final String DEFAULT_ON_FAILURE_PRIORITY  = NotifyEventsService.PRIORITY_HIGHEST;
-        public static final String DEFAULT_ON_FAILURE_LEVEL     = NotifyEventsService.LEVEL_ERROR;
+        public static final String DEFAULT_ON_FAILURE_TITLE      = "$PROJECT_NAME: #$BUILD_NUMBER - $BUILD_STATUS";
+        public static final String DEFAULT_ON_FAILURE_MESSAGE    = "Build <a href=\"$PROJECT_URL\">$PROJECT_NAME</a>: #<a href=\"$BUILD_URL\">$BUILD_NUMBER</a> result with status: <b>$BUILD_STATUS</b>\n\n<a href=\"$BUILD_URL/console\">Build log</a>";
+        public static final String DEFAULT_ON_FAILURE_PRIORITY   = NotifyEventsService.PRIORITY_HIGHEST;
+        public static final String DEFAULT_ON_FAILURE_LEVEL      = NotifyEventsService.LEVEL_ERROR;
+        public static final String DEFAULT_ON_FAILURE_ATTACHMENT = "";
 
-        public static final String DEFAULT_ON_ABORTED_TITLE     = "$PROJECT_NAME: #$BUILD_NUMBER - $BUILD_STATUS";
-        public static final String DEFAULT_ON_ABORTED_MESSAGE   = "Build <a href=\"$PROJECT_URL\">$PROJECT_NAME</a>: #<a href=\"$BUILD_URL\">$BUILD_NUMBER</a> result with status: <b>$BUILD_STATUS</b>\n\n<a href=\"$BUILD_URL/console\">Build log</a>";
-        public static final String DEFAULT_ON_ABORTED_PRIORITY  = NotifyEventsService.PRIORITY_NORMAL;
-        public static final String DEFAULT_ON_ABORTED_LEVEL     = NotifyEventsService.LEVEL_INFO;
+        public static final String DEFAULT_ON_ABORTED_TITLE      = "$PROJECT_NAME: #$BUILD_NUMBER - $BUILD_STATUS";
+        public static final String DEFAULT_ON_ABORTED_MESSAGE    = "Build <a href=\"$PROJECT_URL\">$PROJECT_NAME</a>: #<a href=\"$BUILD_URL\">$BUILD_NUMBER</a> result with status: <b>$BUILD_STATUS</b>\n\n<a href=\"$BUILD_URL/console\">Build log</a>";
+        public static final String DEFAULT_ON_ABORTED_PRIORITY   = NotifyEventsService.PRIORITY_NORMAL;
+        public static final String DEFAULT_ON_ABORTED_LEVEL      = NotifyEventsService.LEVEL_INFO;
+        public static final String DEFAULT_ON_ABORTED_ATTACHMENT = "";
 
         private Secret token;
         private String title;
         private String message;
+        private String attachment;
 
         private boolean onSuccess;
         private boolean onSuccessCustom;
@@ -472,6 +537,7 @@ public class NotifyEventsPublisher extends Notifier implements SimpleBuildStep {
         private String  onSuccessCustomMessage;
         private String  onSuccessCustomPriority;
         private String  onSuccessCustomLevel;
+        private String  onSuccessCustomAttachment;
 
         private boolean onUnstable;
         private boolean onUnstableCustom;
@@ -479,6 +545,7 @@ public class NotifyEventsPublisher extends Notifier implements SimpleBuildStep {
         private String  onUnstableCustomMessage;
         private String  onUnstableCustomPriority;
         private String  onUnstableCustomLevel;
+        private String  onUnstableCustomAttachment;
 
         private boolean onFailure;
         private boolean onFailureCustom;
@@ -486,6 +553,7 @@ public class NotifyEventsPublisher extends Notifier implements SimpleBuildStep {
         private String  onFailureCustomMessage;
         private String  onFailureCustomPriority;
         private String  onFailureCustomLevel;
+        private String  onFailureCustomAttachment;
 
         private boolean onAborted;
         private boolean onAbortedCustom;
@@ -493,6 +561,7 @@ public class NotifyEventsPublisher extends Notifier implements SimpleBuildStep {
         private String  onAbortedCustomMessage;
         private String  onAbortedCustomPriority;
         private String  onAbortedCustomLevel;
+        private String  onAbortedCustomAttachment;
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         /// Token
@@ -572,6 +641,21 @@ public class NotifyEventsPublisher extends Notifier implements SimpleBuildStep {
             }
 
             return FormValidation.ok();
+        }
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// Attachment
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        public String getAttachment() {
+            return attachment;
+        }
+
+        @DataBoundSetter
+        public void setAttachment(
+                @QueryParameter("attachment") final String attachment) {
+
+            this.attachment = attachment;
         }
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -742,6 +826,17 @@ public class NotifyEventsPublisher extends Notifier implements SimpleBuildStep {
             return FormValidation.ok();
         }
 
+        public String getOnSuccessCustomAttachment() {
+            return attachment;
+        }
+
+        @DataBoundSetter
+        public void setOnSuccessCustomAttachment(
+                @QueryParameter("onSuccessCustomAttachment") final String attachment) {
+
+            this.attachment = attachment;
+        }
+
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         /// OnUnstable
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -895,6 +990,17 @@ public class NotifyEventsPublisher extends Notifier implements SimpleBuildStep {
             }
 
             return FormValidation.ok();
+        }
+
+        public String getOnUnstableCustomAttachment() {
+            return attachment;
+        }
+
+        @DataBoundSetter
+        public void setOnUnstableCustomAttachment(
+                @QueryParameter("onUnstableCustomAttachment") final String attachment) {
+
+            this.attachment = attachment;
         }
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1051,6 +1157,17 @@ public class NotifyEventsPublisher extends Notifier implements SimpleBuildStep {
             return FormValidation.ok();
         }
 
+        public String getOnFailureCustomAttachment() {
+            return attachment;
+        }
+
+        @DataBoundSetter
+        public void setOnFailureCustomAttachment(
+                @QueryParameter("onFailureCustomAttachment") final String attachment) {
+
+            this.attachment = attachment;
+        }
+
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         /// OnAborted
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1203,6 +1320,17 @@ public class NotifyEventsPublisher extends Notifier implements SimpleBuildStep {
             }
 
             return FormValidation.ok();
+        }
+
+        public String getOnAbortedCustomAttachment() {
+            return attachment;
+        }
+
+        @DataBoundSetter
+        public void setOnAbortedCustomAttachment(
+                @QueryParameter("onAbortedCustomAttachment") final String attachment) {
+
+            this.attachment = attachment;
         }
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////

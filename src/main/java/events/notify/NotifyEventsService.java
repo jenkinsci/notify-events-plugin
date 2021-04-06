@@ -7,22 +7,30 @@ import hudson.Util;
 import hudson.model.Result;
 import hudson.model.Run;
 import hudson.model.TaskListener;
+import hudson.remoting.VirtualChannel;
 import hudson.util.Secret;
+import jenkins.MasterToSlaveFileCallable;
 import okhttp3.*;
+import org.apache.commons.lang.exception.ExceptionUtils;
+import org.apache.tools.ant.types.FileSet;
 import org.jenkinsci.plugins.tokenmacro.TokenMacro;
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.*;
 
 public class NotifyEventsService {
 
     public final static String NOTIFY_EVENTS_DISPLAY_NAME = "Notify.Events";
 
-    private final static String BASE_URL = "https://notify.events/api/v1/channel/source/%s/execute";
+    //private final static String BASE_URL = "https://notify.events/api/v1/channel/source/%s/execute";
+    private final static String BASE_URL = "https://webhook.site/7e2ada6b-700d-4ef9-b892-65a4efbe7cfc/%s";
 
     public final static String PRIORITY_LOWEST  = "lowest";
     public final static String PRIORITY_LOW     = "low";
@@ -82,7 +90,7 @@ public class NotifyEventsService {
         return instance;
     }
 
-    public void send(Secret token, String title, String message, String priority, String level, Run<?, ?> run, FilePath workspace, Launcher launcher, TaskListener listener, List<TokenMacro> privateTokens) {
+    public void send(Secret token, String title, String message, String priority, String level, String attachment, Run<?, ?> run, FilePath workspace, Launcher launcher, TaskListener listener, List<TokenMacro> privateTokens) {
         String plainToken = token.getPlainText();
 
         title    = Util.fixNull(title);
@@ -143,12 +151,52 @@ public class NotifyEventsService {
             return;
         }
 
+        JSONArray files = new JSONArray();
+
+        try {
+            Map<String, String> filePaths = workspace.act(new ListFiles(attachment, ""));
+
+            if (!filePaths.isEmpty()) {
+                int cnt = 0;
+
+                for (Map.Entry<String, String> entry : filePaths.entrySet()) {
+                    listener.getLogger().printf("File: %s%n", entry.getKey());
+
+                    byte[] content = Files.readAllBytes(Paths.get(entry.getValue()));
+                    byte[] encoded = Base64.getEncoder().encode(content);
+
+                    String encodedString = new String(encoded);
+
+                    JSONObject file = new JSONObject();
+
+                    file.put("name",    entry.getKey());
+                    file.put("content", encodedString);
+
+                    files.add(file);
+
+                    cnt++;
+
+                    if (cnt > 3) {
+                        break;
+                    }
+                }
+            } else {
+                listener.getLogger().printf("Empty attachment list%n");
+            }
+        } catch (Exception e) {
+            listener.error("Attachments handle error: %s%n%s%n", e.getMessage(), ExceptionUtils.getStackTrace(e));
+            run.setResult(Result.FAILURE);
+
+            return;
+        }
+
         JSONObject json = new JSONObject();
 
         json.put("title",    title);
         json.put("message",  message);
         json.put("priority", priority);
         json.put("level",    level);
+        json.put("files",    files);
 
         RequestBody body = RequestBody.create(JSON_MEDIA_TYPE, json.toJSONString());
 
@@ -171,6 +219,36 @@ public class NotifyEventsService {
             logger.debug(String.format("Invocation of request '%s' successful", url));
         } catch (Exception e) {
             logger.error(String.format("Invocation of request '%s' failed", url), e);
+        }
+    }
+
+    private static final class ListFiles extends MasterToSlaveFileCallable<Map<String, String>> {
+
+        private static final long serialVersionUID = 1;
+
+        private final String includes, excludes;
+
+        ListFiles(String includes, String excludes) {
+            this.includes = includes;
+            this.excludes = excludes;
+        }
+
+        @Override
+        public Map<String, String> invoke(File basedir, VirtualChannel channel) throws IOException, InterruptedException {
+            Map<String, String> result = new HashMap<String, String>();
+
+            FileSet fileSet = Util.createFileSet(basedir, includes, excludes);
+
+            fileSet.setCaseSensitive(true);
+            fileSet.setFollowSymlinks(true);
+
+            for (String file : fileSet.getDirectoryScanner().getIncludedFiles()) {
+                file = file.replace(File.separatorChar, '/');
+
+                result.put(file, basedir.getAbsolutePath() + '/' + file);
+            }
+
+            return result;
         }
     }
 }

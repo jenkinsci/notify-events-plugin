@@ -1,5 +1,6 @@
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+
     <f:entry title="Token" field="token">
         <f:textbox />
     </f:entry>
@@ -9,6 +10,10 @@
     <f:entry title="Message" field="message">
         <f:textarea default="${descriptor.DEFAULT_MESSAGE}" />
     </f:entry>
+    <f:entry title="Attachment" field="attachment">
+        <f:textbox default="${descriptor.DEFAULT_ATTACHMENT}" />
+    </f:entry>
+
     <f:entry title="Send when">
         <table>
 
@@ -33,6 +38,9 @@
                     </div>
                     <f:entry title="Message" field="onSuccessCustomMessage">
                         <f:textarea default="${descriptor.DEFAULT_ON_SUCCESS_MESSAGE}" />
+                    </f:entry>
+                    <f:entry title="Attachment" field="onSuccessCustomAttachment">
+                        <f:textbox default="${descriptor.DEFAULT_ON_SUCCESS_ATTACHMENT}" />
                     </f:entry>
                 </f:optionalBlock>
             </f:optionalBlock>
@@ -59,6 +67,9 @@
                     <f:entry title="Message" field="onUnstableCustomMessage">
                         <f:textarea default="${descriptor.DEFAULT_ON_UNSTABLE_MESSAGE}" />
                     </f:entry>
+                    <f:entry title="Attachment" field="onUnstableCustomAttachment">
+                        <f:textbox default="${descriptor.DEFAULT_ON_UNSTABLE_ATTACHMENT}" />
+                    </f:entry>
                 </f:optionalBlock>
             </f:optionalBlock>
 
@@ -84,6 +95,9 @@
                     <f:entry title="Message" field="onFailureCustomMessage">
                         <f:textarea default="${descriptor.DEFAULT_ON_FAILURE_MESSAGE}" />
                     </f:entry>
+                    <f:entry title="Attachment" field="onFailureCustomAttachment">
+                        <f:textbox default="${descriptor.DEFAULT_ON_FAILURE_ATTACHMENT}" />
+                    </f:entry>
                 </f:optionalBlock>
             </f:optionalBlock>
 
@@ -108,6 +122,9 @@
                     </div>
                     <f:entry title="Message" field="onAbortedCustomMessage">
                         <f:textarea default="${descriptor.DEFAULT_ON_ABORTED_MESSAGE}" />
+                    </f:entry>
+                    <f:entry title="Attachment" field="onAbortedCustomAttachment">
+                        <f:textbox default="${descriptor.DEFAULT_ON_ABORTED_ATTACHMENT}" />
                     </f:entry>
                 </f:optionalBlock>
             </f:optionalBlock>

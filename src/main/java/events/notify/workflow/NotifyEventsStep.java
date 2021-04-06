@@ -30,6 +30,7 @@ public class NotifyEventsStep extends Step {
     private String message;
     private String priority;
     private String level;
+    private String attachment;
 
     public String getToken() {
         return token.getPlainText();
@@ -81,6 +82,15 @@ public class NotifyEventsStep extends Step {
         this.level = level;
     }
 
+    public String getAttachment() {
+        return attachment;
+    }
+
+    @DataBoundSetter
+    public void setAttachment(final String attachment) {
+        this.attachment = attachment;
+    }
+
     @DataBoundConstructor
     public NotifyEventsStep() {
     }
@@ -98,16 +108,18 @@ public class NotifyEventsStep extends Step {
     @Extension
     public static class DescriptorImpl extends StepDescriptor {
 
-        public final static String DEFAULT_TITLE    = "$BUILD_TAG - Message";
-        public final static String DEFAULT_MESSAGE  = "";
-        public final static String DEFAULT_PRIORITY = NotifyEventsService.PRIORITY_NORMAL;
-        public final static String DEFAULT_LEVEL    = NotifyEventsService.LEVEL_INFO;
+        public final static String DEFAULT_TITLE      = "$BUILD_TAG - Message";
+        public final static String DEFAULT_MESSAGE    = "";
+        public final static String DEFAULT_PRIORITY   = NotifyEventsService.PRIORITY_NORMAL;
+        public final static String DEFAULT_LEVEL      = NotifyEventsService.LEVEL_INFO;
+        public final static String DEFAULT_ATTACHMENT = "";
 
         private Secret token;
         private String title;
         private String message;
         private String priority;
         private String level;
+        private String attachment;
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         /// Token
@@ -257,6 +269,19 @@ public class NotifyEventsStep extends Step {
         }
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// Attachment
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        public String getAttachment() {
+            return attachment;
+        }
+
+        @DataBoundSetter
+        public void setAttachment(final String attachment) {
+            this.attachment = attachment;
+        }
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         @Override
         public Set<? extends Class<?>> getRequiredContext() {
@@ -301,7 +326,7 @@ public class NotifyEventsStep extends Step {
             final TaskListener listener = getContext().get(TaskListener.class);
             Objects.requireNonNull(listener, "Listener is mandatory here");
 
-            NotifyEventsService.getInstance().send(step.token, step.title, step.message, step.priority, step.level, run, workspace, launcher, listener, null);
+            NotifyEventsService.getInstance().send(step.token, step.title, step.message, step.priority, step.level, step.attachment, run, workspace, launcher, listener, null);
 
             return null;
         }

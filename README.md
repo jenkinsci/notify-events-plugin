@@ -12,7 +12,7 @@ This plugin allows **Jenkins** to send notification to:
 - Microsoft Teams
 - Voice calls
 
-See the full list of supported messengers list [here](https://notify.events/en-US/features).
+See the full list of supported messengers [here](https://notify.events/en-US/features).
 
 #### Read the manual in other languages
 
@@ -30,7 +30,7 @@ See the full list of supported messengers list [here](https://notify.events/en-U
 2. Manually install the plugin on the Jenkins controller. Read full instructions for advanced plugin installation [here](https://jenkins.io/doc/book/managing/plugins/#advanced-installation).
 
 ### Option 3. Building from the source
-1. To build the plugin, run `mvn install`. This will create the file **./target/notify-events.hpi** file.
+1. To build the plugin, run `mvn install`. This will create the **./target/notify-events.hpi** file.
 2. Manually install the plugin on the Jenkins controller. Read full instructions for advanced plugin installation [here](https://jenkins.io/doc/book/managing/plugins/#advanced-installation).
 
 ## Basic usage
