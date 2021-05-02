@@ -1,0 +1,5 @@
+<?jelly escape-by-default='true'?>
+<div>
+    The format is a comma separated list of Ant include file syntax.
+    Can use wildcards like 'module/dist/**/*.zip'. See the <a href="http://ant.apache.org/manual/Types/fileset.html" target="_blank">@includes of Ant fileset</a> for the exact format. The base directory is <a href="ws/" target="_blank">the workspace</a>.
+</div>

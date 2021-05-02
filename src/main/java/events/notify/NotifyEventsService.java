@@ -21,6 +21,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
@@ -29,8 +30,7 @@ public class NotifyEventsService {
 
     public final static String NOTIFY_EVENTS_DISPLAY_NAME = "Notify.Events";
 
-    //private final static String BASE_URL = "https://notify.events/api/v1/channel/source/%s/execute";
-    private final static String BASE_URL = "https://webhook.site/7e2ada6b-700d-4ef9-b892-65a4efbe7cfc/%s";
+    private final static String BASE_URL = "https://notify.events/api/v1/channel/source/%s/execute";
 
     public final static String PRIORITY_LOWEST  = "lowest";
     public final static String PRIORITY_LOW     = "low";
@@ -165,7 +165,7 @@ public class NotifyEventsService {
                     byte[] content = Files.readAllBytes(Paths.get(entry.getValue()));
                     byte[] encoded = Base64.getEncoder().encode(content);
 
-                    String encodedString = new String(encoded);
+                    String encodedString = new String(encoded, StandardCharsets.US_ASCII);
 
                     JSONObject file = new JSONObject();
 

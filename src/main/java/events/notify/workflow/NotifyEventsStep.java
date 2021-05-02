@@ -32,6 +32,21 @@ public class NotifyEventsStep extends Step {
     private String level;
     private String attachment;
 
+    @Override
+    public NotifyEventsStep.DescriptorImpl getDescriptor() {
+        return (NotifyEventsStep.DescriptorImpl) super.getDescriptor();
+    }
+
+    @DataBoundConstructor
+    public NotifyEventsStep() {
+        this.token      = Secret.fromString("");
+        this.title      = NotifyEventsStep.DescriptorImpl.DEFAULT_TITLE;
+        this.message    = NotifyEventsStep.DescriptorImpl.DEFAULT_MESSAGE;
+        this.priority   = NotifyEventsStep.DescriptorImpl.DEFAULT_PRIORITY;
+        this.level      = NotifyEventsStep.DescriptorImpl.DEFAULT_LEVEL;
+        this.attachment = NotifyEventsStep.DescriptorImpl.DEFAULT_ATTACHMENT;
+    }
+
     public String getToken() {
         return token.getPlainText();
     }
@@ -89,15 +104,6 @@ public class NotifyEventsStep extends Step {
     @DataBoundSetter
     public void setAttachment(final String attachment) {
         this.attachment = attachment;
-    }
-
-    @DataBoundConstructor
-    public NotifyEventsStep() {
-    }
-
-    @Override
-    public NotifyEventsStep.DescriptorImpl getDescriptor() {
-        return (NotifyEventsStep.DescriptorImpl) super.getDescriptor();
     }
 
     @Override

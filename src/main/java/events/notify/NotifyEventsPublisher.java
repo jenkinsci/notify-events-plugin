@@ -177,8 +177,8 @@ public class NotifyEventsPublisher extends Notifier implements SimpleBuildStep {
         return onSuccessCustomAttachment;
     }
 
-    public void setOnSuccessCustomAttachment(final String attachment) {
-        this.onSuccessCustomAttachment = attachment;
+    public void setOnSuccessCustomAttachment(final String onSuccessCustomAttachment) {
+        this.onSuccessCustomAttachment = onSuccessCustomAttachment;
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -238,11 +238,11 @@ public class NotifyEventsPublisher extends Notifier implements SimpleBuildStep {
     }
 
     public String getOnUnstableCustomAttachment() {
-        return onSuccessCustomAttachment;
+        return onUnstableCustomAttachment;
     }
 
-    public void setOnUnstableCustomAttachment(final String attachment) {
-        this.onSuccessCustomAttachment = attachment;
+    public void setOnUnstableCustomAttachment(final String onUnstableCustomAttachment) {
+        this.onUnstableCustomAttachment = onUnstableCustomAttachment;
     }
     
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -302,11 +302,11 @@ public class NotifyEventsPublisher extends Notifier implements SimpleBuildStep {
     }
 
     public String getOnFailureCustomAttachment() {
-        return onSuccessCustomAttachment;
+        return onFailureCustomAttachment;
     }
 
-    public void setOnFailureCustomAttachment(final String attachment) {
-        this.onSuccessCustomAttachment = attachment;
+    public void setOnFailureCustomAttachment(final String onFailureCustomAttachment) {
+        this.onFailureCustomAttachment = onFailureCustomAttachment;
     }
     
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -366,11 +366,11 @@ public class NotifyEventsPublisher extends Notifier implements SimpleBuildStep {
     }
 
     public String getOnAbortedCustomAttachment() {
-        return onSuccessCustomAttachment;
+        return onAbortedCustomAttachment;
     }
 
-    public void setOnAbortedCustomAttachment(final String attachment) {
-        this.onSuccessCustomAttachment = attachment;
+    public void setOnAbortedCustomAttachment(final String onAbortedCustomAttachment) {
+        this.onAbortedCustomAttachment = onAbortedCustomAttachment;
     }
     
     @Override
@@ -380,7 +380,7 @@ public class NotifyEventsPublisher extends Notifier implements SimpleBuildStep {
 
     @DataBoundConstructor
     public NotifyEventsPublisher(
-            final String token, final String title, final String message,
+            final String token, final String title, final String message, final String attachment,
             final boolean onSuccess, final boolean onSuccessCustom, final String onSuccessCustomTitle, final String onSuccessCustomMessage, final String onSuccessCustomPriority, final String onSuccessCustomLevel, final String onSuccessCustomAttachment,
             final boolean onUnstable, final boolean onUnstableCustom, final String onUnstableCustomTitle, final String onUnstableCustomMessage, final String onUnstableCustomPriority, final String onUnstableCustomLevel, final String onUnstableCustomAttachment,
             final boolean onFailure, final boolean onFailureCustom, final String onFailureCustomTitle, final String onFailureCustomMessage, final String onFailureCustomPriority, final String onFailureCustomLevel, final String onFailureCustomAttachment,
@@ -827,14 +827,14 @@ public class NotifyEventsPublisher extends Notifier implements SimpleBuildStep {
         }
 
         public String getOnSuccessCustomAttachment() {
-            return attachment;
+            return onSuccessCustomAttachment;
         }
 
         @DataBoundSetter
         public void setOnSuccessCustomAttachment(
-                @QueryParameter("onSuccessCustomAttachment") final String attachment) {
+                @QueryParameter("onSuccessCustomAttachment") final String onSuccessCustomAttachment) {
 
-            this.attachment = attachment;
+            this.onSuccessCustomAttachment = onSuccessCustomAttachment;
         }
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -993,14 +993,14 @@ public class NotifyEventsPublisher extends Notifier implements SimpleBuildStep {
         }
 
         public String getOnUnstableCustomAttachment() {
-            return attachment;
+            return onUnstableCustomAttachment;
         }
 
         @DataBoundSetter
         public void setOnUnstableCustomAttachment(
-                @QueryParameter("onUnstableCustomAttachment") final String attachment) {
+                @QueryParameter("onUnstableCustomAttachment") final String onUnstableCustomAttachment) {
 
-            this.attachment = attachment;
+            this.onUnstableCustomAttachment = onUnstableCustomAttachment;
         }
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1158,14 +1158,14 @@ public class NotifyEventsPublisher extends Notifier implements SimpleBuildStep {
         }
 
         public String getOnFailureCustomAttachment() {
-            return attachment;
+            return onFailureCustomAttachment;
         }
 
         @DataBoundSetter
         public void setOnFailureCustomAttachment(
-                @QueryParameter("onFailureCustomAttachment") final String attachment) {
+                @QueryParameter("onFailureCustomAttachment") final String onFailureCustomAttachment) {
 
-            this.attachment = attachment;
+            this.onFailureCustomAttachment = onFailureCustomAttachment;
         }
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1323,14 +1323,14 @@ public class NotifyEventsPublisher extends Notifier implements SimpleBuildStep {
         }
 
         public String getOnAbortedCustomAttachment() {
-            return attachment;
+            return onAbortedCustomAttachment;
         }
 
         @DataBoundSetter
         public void setOnAbortedCustomAttachment(
-                @QueryParameter("onAbortedCustomAttachment") final String attachment) {
+                @QueryParameter("onAbortedCustomAttachment") final String onAbortedCustomAttachment) {
 
-            this.attachment = attachment;
+            this.onAbortedCustomAttachment = onAbortedCustomAttachment;
         }
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
