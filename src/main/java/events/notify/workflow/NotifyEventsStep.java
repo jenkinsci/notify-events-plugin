@@ -25,12 +25,13 @@ import java.util.Set;
 
 public class NotifyEventsStep extends Step {
 
-    private Secret token;
-    private String title;
-    private String message;
-    private String priority;
-    private String level;
-    private String attachment;
+    private Secret  token;
+    private String  title;
+    private String  message;
+    private String  priority;
+    private String  level;
+    private Boolean attachBuildLog;
+    private String  attachment;
 
     @Override
     public NotifyEventsStep.DescriptorImpl getDescriptor() {
@@ -39,12 +40,13 @@ public class NotifyEventsStep extends Step {
 
     @DataBoundConstructor
     public NotifyEventsStep() {
-        this.token      = Secret.fromString("");
-        this.title      = NotifyEventsStep.DescriptorImpl.DEFAULT_TITLE;
-        this.message    = NotifyEventsStep.DescriptorImpl.DEFAULT_MESSAGE;
-        this.priority   = NotifyEventsStep.DescriptorImpl.DEFAULT_PRIORITY;
-        this.level      = NotifyEventsStep.DescriptorImpl.DEFAULT_LEVEL;
-        this.attachment = NotifyEventsStep.DescriptorImpl.DEFAULT_ATTACHMENT;
+        this.token          = Secret.fromString("");
+        this.title          = NotifyEventsStep.DescriptorImpl.DEFAULT_TITLE;
+        this.message        = NotifyEventsStep.DescriptorImpl.DEFAULT_MESSAGE;
+        this.priority       = NotifyEventsStep.DescriptorImpl.DEFAULT_PRIORITY;
+        this.level          = NotifyEventsStep.DescriptorImpl.DEFAULT_LEVEL;
+        this.attachBuildLog = NotifyEventsStep.DescriptorImpl.DEFAULT_ATTACH_BUILD_LOG;
+        this.attachment     = NotifyEventsStep.DescriptorImpl.DEFAULT_ATTACHMENT;
     }
 
     public String getToken() {
@@ -97,6 +99,15 @@ public class NotifyEventsStep extends Step {
         this.level = level;
     }
 
+    public Boolean getAttachBuildLog() {
+        return attachBuildLog;
+    }
+
+    @DataBoundSetter
+    public void setAttachBuildLog(final Boolean attachBuildLog) {
+        this.attachBuildLog = attachBuildLog;
+    }
+
     public String getAttachment() {
         return attachment;
     }
@@ -114,18 +125,20 @@ public class NotifyEventsStep extends Step {
     @Extension
     public static class DescriptorImpl extends StepDescriptor {
 
-        public final static String DEFAULT_TITLE      = "$BUILD_TAG - Message";
-        public final static String DEFAULT_MESSAGE    = "";
-        public final static String DEFAULT_PRIORITY   = NotifyEventsService.PRIORITY_NORMAL;
-        public final static String DEFAULT_LEVEL      = NotifyEventsService.LEVEL_INFO;
-        public final static String DEFAULT_ATTACHMENT = "";
+        public final static String  DEFAULT_TITLE            = "$BUILD_TAG - Message";
+        public final static String  DEFAULT_MESSAGE          = "";
+        public final static String  DEFAULT_PRIORITY         = NotifyEventsService.PRIORITY_NORMAL;
+        public final static String  DEFAULT_LEVEL            = NotifyEventsService.LEVEL_INFO;
+        public final static Boolean DEFAULT_ATTACH_BUILD_LOG = false;
+        public final static String  DEFAULT_ATTACHMENT       = "";
 
-        private Secret token;
-        private String title;
-        private String message;
-        private String priority;
-        private String level;
-        private String attachment;
+        private Secret  token;
+        private String  title;
+        private String  message;
+        private String  priority;
+        private String  level;
+        private Boolean attachBuildLog;
+        private String  attachment;
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         /// Token
@@ -275,6 +288,19 @@ public class NotifyEventsStep extends Step {
         }
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// Attach build log
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        public Boolean getAttachBuildLog() {
+            return attachBuildLog;
+        }
+
+        @DataBoundSetter
+        public void setAttachBuildLog(final Boolean attachBuildLog) {
+            this.attachBuildLog = attachBuildLog;
+        }
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         /// Attachment
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -332,7 +358,7 @@ public class NotifyEventsStep extends Step {
             final TaskListener listener = getContext().get(TaskListener.class);
             Objects.requireNonNull(listener, "Listener is mandatory here");
 
-            NotifyEventsService.getInstance().send(step.token, step.title, step.message, step.priority, step.level, step.attachment, run, workspace, launcher, listener, null);
+            NotifyEventsService.getInstance().send(step.token, step.title, step.message, step.priority, step.level, false, step.attachment, run, workspace, launcher, listener, null);
 
             return null;
         }

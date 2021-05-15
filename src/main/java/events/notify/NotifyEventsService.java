@@ -19,6 +19,7 @@ import org.json.simple.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -90,7 +91,7 @@ public class NotifyEventsService {
         return instance;
     }
 
-    public void send(Secret token, String title, String message, String priority, String level, String attachment, Run<?, ?> run, FilePath workspace, Launcher launcher, TaskListener listener, List<TokenMacro> privateTokens) {
+    public void send(Secret token, String title, String message, String priority, String level, Boolean attachBuildLog, String attachment, Run<?, ?> run, FilePath workspace, Launcher launcher, TaskListener listener, List<TokenMacro> privateTokens) throws IOException {
         String plainToken = token.getPlainText();
 
         title    = Util.fixNull(title);
@@ -153,12 +154,38 @@ public class NotifyEventsService {
 
         JSONArray files = new JSONArray();
 
+        int cnt = 0;
+
+        if (attachBuildLog) {
+            ByteArrayOutputStream bao = new ByteArrayOutputStream();
+
+            long logFileLength = run.getLogText().length();
+            long pos = 0;
+
+            while (pos < logFileLength) {
+                pos = run.getLogText().writeLogTo(pos, bao);
+            }
+
+            byte[] content = bao.toByteArray();
+            byte[] encoded = Base64.getEncoder().encode(content);
+
+            String encodedString = new String(encoded, StandardCharsets.US_ASCII);
+
+            JSONObject file = new JSONObject();
+
+            file.put("name",    "build.log");
+            file.put("content", encodedString);
+
+            files.add(file);
+
+            cnt++;
+        }
+
         if (!attachment.trim().isEmpty()) {
             try {
                 Map<String, String> filePaths = workspace.act(new ListFiles(attachment, ""));
 
                 if (!filePaths.isEmpty()) {
-                    int cnt = 0;
 
                     for (Map.Entry<String, String> entry : filePaths.entrySet()) {
                         listener.getLogger().printf("File: %s%n", entry.getValue());

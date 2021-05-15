@@ -28,10 +28,11 @@ import java.util.Map;
 
 public class NotifyEventsPublisher extends Notifier implements SimpleBuildStep {
 
-    private Secret token;
-    private String title;
-    private String message;
-    private String attachment;
+    private Secret  token;
+    private String  title;
+    private String  message;
+    private Boolean attachBuildLog;
+    private String  attachment;
 
     private boolean onSuccess;
     private boolean onSuccessCustom;
@@ -39,6 +40,7 @@ public class NotifyEventsPublisher extends Notifier implements SimpleBuildStep {
     private String  onSuccessCustomMessage;
     private String  onSuccessCustomPriority;
     private String  onSuccessCustomLevel;
+    private Boolean onSuccessCustomAttachBuildLog;
     private String  onSuccessCustomAttachment;
 
     private boolean onUnstable;
@@ -47,6 +49,7 @@ public class NotifyEventsPublisher extends Notifier implements SimpleBuildStep {
     private String  onUnstableCustomMessage;
     private String  onUnstableCustomPriority;
     private String  onUnstableCustomLevel;
+    private Boolean onUnstableCustomAttachBuildLog;
     private String  onUnstableCustomAttachment;
     
     private boolean onFailure;
@@ -55,6 +58,7 @@ public class NotifyEventsPublisher extends Notifier implements SimpleBuildStep {
     private String  onFailureCustomMessage;
     private String  onFailureCustomPriority;
     private String  onFailureCustomLevel;
+    private Boolean onFailureCustomAttachBuildLog;
     private String  onFailureCustomAttachment;
 
     private boolean onAborted;
@@ -63,6 +67,7 @@ public class NotifyEventsPublisher extends Notifier implements SimpleBuildStep {
     private String  onAbortedCustomMessage;
     private String  onAbortedCustomPriority;
     private String  onAbortedCustomLevel;
+    private Boolean onAbortedCustomAttachBuildLog;
     private String  onAbortedCustomAttachment;
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -103,6 +108,18 @@ public class NotifyEventsPublisher extends Notifier implements SimpleBuildStep {
 
     public void setMessage(final String message) {
         this.message = message;
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// Attach build log
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    public Boolean getAttachBuildLog() {
+        return attachBuildLog;
+    }
+
+    public void setAttachBuildLog(final Boolean attachBuildLog) {
+        this.attachBuildLog = attachBuildLog;
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -173,6 +190,14 @@ public class NotifyEventsPublisher extends Notifier implements SimpleBuildStep {
         this.onSuccessCustomLevel = level;
     }
 
+    public Boolean getOnSuccessCustomAttachBuildLog() {
+        return onSuccessCustomAttachBuildLog;
+    }
+
+    public void setOnSuccessCustomAttachBuildLog(final Boolean onSuccessCustomAttachBuildLog) {
+        this.onSuccessCustomAttachBuildLog = onSuccessCustomAttachBuildLog;
+    }
+
     public String getOnSuccessCustomAttachment() {
         return onSuccessCustomAttachment;
     }
@@ -235,6 +260,14 @@ public class NotifyEventsPublisher extends Notifier implements SimpleBuildStep {
 
     public void setOnUnstableCustomLevel(final String level) {
         this.onUnstableCustomLevel = level;
+    }
+
+    public Boolean getOnUnstableCustomAttachBuildLog() {
+        return onUnstableCustomAttachBuildLog;
+    }
+
+    public void setOnUnstableCustomAttachBuildLog(final Boolean onUnstableCustomAttachBuildLog) {
+        this.onUnstableCustomAttachBuildLog = onUnstableCustomAttachBuildLog;
     }
 
     public String getOnUnstableCustomAttachment() {
@@ -301,6 +334,14 @@ public class NotifyEventsPublisher extends Notifier implements SimpleBuildStep {
         this.onFailureCustomLevel = level;
     }
 
+    public Boolean getOnFailureCustomAttachBuildLog() {
+        return onFailureCustomAttachBuildLog;
+    }
+
+    public void setOnFailureCustomAttachBuildLog(final Boolean onFailureCustomAttachBuildLog) {
+        this.onFailureCustomAttachBuildLog = onFailureCustomAttachBuildLog;
+    }
+
     public String getOnFailureCustomAttachment() {
         return onFailureCustomAttachment;
     }
@@ -365,6 +406,14 @@ public class NotifyEventsPublisher extends Notifier implements SimpleBuildStep {
         this.onAbortedCustomLevel = level;
     }
 
+    public Boolean getOnAbortedCustomAttachBuildLog() {
+        return onFailureCustomAttachBuildLog;
+    }
+
+    public void setOnAbortedCustomAttachBuildLog(final Boolean onAbortedCustomAttachBuildLog) {
+        this.onAbortedCustomAttachBuildLog = onAbortedCustomAttachBuildLog;
+    }
+
     public String getOnAbortedCustomAttachment() {
         return onAbortedCustomAttachment;
     }
@@ -380,47 +429,51 @@ public class NotifyEventsPublisher extends Notifier implements SimpleBuildStep {
 
     @DataBoundConstructor
     public NotifyEventsPublisher(
-            final String token, final String title, final String message, final String attachment,
-            final boolean onSuccess, final boolean onSuccessCustom, final String onSuccessCustomTitle, final String onSuccessCustomMessage, final String onSuccessCustomPriority, final String onSuccessCustomLevel, final String onSuccessCustomAttachment,
-            final boolean onUnstable, final boolean onUnstableCustom, final String onUnstableCustomTitle, final String onUnstableCustomMessage, final String onUnstableCustomPriority, final String onUnstableCustomLevel, final String onUnstableCustomAttachment,
-            final boolean onFailure, final boolean onFailureCustom, final String onFailureCustomTitle, final String onFailureCustomMessage, final String onFailureCustomPriority, final String onFailureCustomLevel, final String onFailureCustomAttachment,
-            final boolean onAborted, final boolean onAbortedCustom, final String onAbortedCustomTitle, final String onAbortedCustomMessage, final String onAbortedCustomPriority, final String onAbortedCustomLevel, final String onAbortedCustomAttachment) {
-        this.token      = Secret.fromString(Util.fixEmptyAndTrim(token));
-        this.title      = Util.fixNull(title);
-        this.message    = Util.fixNull(message);
-        this.attachment = Util.fixNull(attachment);
+            final String token, final String title, final String message, final Boolean attachBuildLog, final String attachment,
+            final boolean onSuccess, final boolean onSuccessCustom, final String onSuccessCustomTitle, final String onSuccessCustomMessage, final String onSuccessCustomPriority, final String onSuccessCustomLevel, final Boolean onSuccessCustomAttachBuildLog, final String onSuccessCustomAttachment,
+            final boolean onUnstable, final boolean onUnstableCustom, final String onUnstableCustomTitle, final String onUnstableCustomMessage, final String onUnstableCustomPriority, final String onUnstableCustomLevel, final Boolean onUnstableCustomAttachBuildLog, final String onUnstableCustomAttachment,
+            final boolean onFailure, final boolean onFailureCustom, final String onFailureCustomTitle, final String onFailureCustomMessage, final String onFailureCustomPriority, final String onFailureCustomLevel, final Boolean onFailureCustomAttachBuildLog, final String onFailureCustomAttachment,
+            final boolean onAborted, final boolean onAbortedCustom, final String onAbortedCustomTitle, final String onAbortedCustomMessage, final String onAbortedCustomPriority, final String onAbortedCustomLevel, final Boolean onAbortedCustomAttachBuildLog, final String onAbortedCustomAttachment) {
+        this.token          = Secret.fromString(Util.fixEmptyAndTrim(token));
+        this.title          = Util.fixNull(title);
+        this.message        = Util.fixNull(message);
+        this.attachBuildLog = attachBuildLog;
+        this.attachment     = Util.fixNull(attachment);
 
-        this.onSuccess                 = onSuccess;
-        this.onSuccessCustom           = onSuccessCustom;
-        this.onSuccessCustomTitle      = Util.fixNull(onSuccessCustomTitle);
-        this.onSuccessCustomMessage    = Util.fixNull(onSuccessCustomMessage);
-        this.onSuccessCustomPriority   = Util.fixNull(onSuccessCustomPriority);
-        this.onSuccessCustomLevel      = Util.fixNull(onSuccessCustomLevel);
-        this.onSuccessCustomAttachment = Util.fixNull(onSuccessCustomAttachment);
+        this.onSuccess                     = onSuccess;
+        this.onSuccessCustom               = onSuccessCustom;
+        this.onSuccessCustomTitle          = Util.fixNull(onSuccessCustomTitle);
+        this.onSuccessCustomMessage        = Util.fixNull(onSuccessCustomMessage);
+        this.onSuccessCustomPriority       = Util.fixNull(onSuccessCustomPriority);
+        this.onSuccessCustomLevel          = Util.fixNull(onSuccessCustomLevel);
+        this.onSuccessCustomAttachBuildLog = onSuccessCustomAttachBuildLog;
+        this.onSuccessCustomAttachment     = Util.fixNull(onSuccessCustomAttachment);
 
-        this.onUnstable                 = onUnstable;
-        this.onUnstableCustom           = onUnstableCustom;
-        this.onUnstableCustomTitle      = Util.fixNull(onUnstableCustomTitle);
-        this.onUnstableCustomMessage    = Util.fixNull(onUnstableCustomMessage);
-        this.onUnstableCustomPriority   = Util.fixNull(onUnstableCustomPriority);
-        this.onUnstableCustomLevel      = Util.fixNull(onUnstableCustomLevel);
-        this.onUnstableCustomAttachment = Util.fixNull(onUnstableCustomAttachment);
+        this.onUnstable                     = onUnstable;
+        this.onUnstableCustom               = onUnstableCustom;
+        this.onUnstableCustomTitle          = Util.fixNull(onUnstableCustomTitle);
+        this.onUnstableCustomMessage        = Util.fixNull(onUnstableCustomMessage);
+        this.onUnstableCustomPriority       = Util.fixNull(onUnstableCustomPriority);
+        this.onUnstableCustomLevel          = Util.fixNull(onUnstableCustomLevel);
+        this.onUnstableCustomAttachBuildLog = onUnstableCustomAttachBuildLog;
+        this.onUnstableCustomAttachment     = Util.fixNull(onUnstableCustomAttachment);
 
-        this.onFailure                 = onFailure;
-        this.onFailureCustom           = onFailureCustom;
-        this.onFailureCustomTitle      = Util.fixNull(onFailureCustomTitle);
-        this.onFailureCustomMessage    = Util.fixNull(onFailureCustomMessage);
-        this.onFailureCustomPriority   = Util.fixNull(onFailureCustomPriority);
-        this.onFailureCustomLevel      = Util.fixNull(onFailureCustomLevel);
-        this.onFailureCustomAttachment = Util.fixNull(onFailureCustomAttachment);
+        this.onFailure                     = onFailure;
+        this.onFailureCustom               = onFailureCustom;
+        this.onFailureCustomTitle          = Util.fixNull(onFailureCustomTitle);
+        this.onFailureCustomMessage        = Util.fixNull(onFailureCustomMessage);
+        this.onFailureCustomPriority       = Util.fixNull(onFailureCustomPriority);
+        this.onFailureCustomAttachBuildLog = onFailureCustomAttachBuildLog;
+        this.onFailureCustomAttachment     = Util.fixNull(onFailureCustomAttachment);
 
-        this.onAborted                 = onAborted;
-        this.onAbortedCustom           = onAbortedCustom;
-        this.onAbortedCustomTitle      = Util.fixNull(onAbortedCustomTitle);
-        this.onAbortedCustomMessage    = Util.fixNull(onAbortedCustomMessage);
-        this.onAbortedCustomPriority   = Util.fixNull(onAbortedCustomPriority);
-        this.onAbortedCustomLevel      = Util.fixNull(onAbortedCustomLevel);
-        this.onAbortedCustomAttachment = Util.fixNull(onAbortedCustomAttachment);
+        this.onAborted                     = onAborted;
+        this.onAbortedCustom               = onAbortedCustom;
+        this.onAbortedCustomTitle          = Util.fixNull(onAbortedCustomTitle);
+        this.onAbortedCustomMessage        = Util.fixNull(onAbortedCustomMessage);
+        this.onAbortedCustomPriority       = Util.fixNull(onAbortedCustomPriority);
+        this.onAbortedCustomLevel          = Util.fixNull(onAbortedCustomLevel);
+        this.onAbortedCustomAttachBuildLog = onAbortedCustomAttachBuildLog;
+        this.onAbortedCustomAttachment     = Util.fixNull(onAbortedCustomAttachment);
     }
 
     @Override
@@ -439,60 +492,65 @@ public class NotifyEventsPublisher extends Notifier implements SimpleBuildStep {
             return;
         }
 
-        String title      = this.title;
-        String message    = this.message;
-        String attachment = this.attachment;
+        String  title          = this.title;
+        String  message        = this.message;
+        Boolean attachBuildLog = this.attachBuildLog;
+        String  attachment     = this.attachment;
 
         String priority;
         String level;
 
         if ((result == Result.SUCCESS) && onSuccess) {
             if (onSuccessCustom) {
-                title      = onSuccessCustomTitle;
-                message    = onSuccessCustomMessage;
-                priority   = onSuccessCustomPriority;
-                level      = onSuccessCustomLevel;
-                attachment = onSuccessCustomAttachment;
+                title          = onSuccessCustomTitle;
+                message        = onSuccessCustomMessage;
+                priority       = onSuccessCustomPriority;
+                level          = onSuccessCustomLevel;
+                attachBuildLog = onSuccessCustomAttachBuildLog;
+                attachment     = onSuccessCustomAttachment;
             } else {
                 priority = NotifyEventsService.PRIORITY_NORMAL;
                 level    = NotifyEventsService.LEVEL_SUCCESS;
             }
         } else if ((result == Result.UNSTABLE) && onUnstable) {
             if (onUnstableCustom) {
-                title      = onUnstableCustomTitle;
-                message    = onUnstableCustomMessage;
-                priority   = onUnstableCustomPriority;
-                level      = onUnstableCustomLevel;
-                attachment = onUnstableCustomAttachment;
+                title          = onUnstableCustomTitle;
+                message        = onUnstableCustomMessage;
+                priority       = onUnstableCustomPriority;
+                level          = onUnstableCustomLevel;
+                attachBuildLog = onUnstableCustomAttachBuildLog;
+                attachment     = onUnstableCustomAttachment;
             } else {
                 priority = NotifyEventsService.PRIORITY_HIGH;
                 level    = NotifyEventsService.LEVEL_WARNING;
             }
         } else if ((result == Result.FAILURE) && onFailure) {
             if (onFailureCustom) {
-                title      = onFailureCustomTitle;
-                message    = onFailureCustomMessage;
-                priority   = onFailureCustomPriority;
-                level      = onFailureCustomLevel;
-                attachment = onFailureCustomAttachment;
+                title          = onFailureCustomTitle;
+                message        = onFailureCustomMessage;
+                priority       = onFailureCustomPriority;
+                level          = onFailureCustomLevel;
+                attachBuildLog = onFailureCustomAttachBuildLog;
+                attachment     = onFailureCustomAttachment;
             } else {
                 priority = NotifyEventsService.PRIORITY_HIGHEST;
                 level    = NotifyEventsService.LEVEL_ERROR;
             }
         } else /*if ((result == Result.ABORTED) && onAborted)*/ {
             if (onAbortedCustom) {
-                title      = onAbortedCustomTitle;
-                message    = onAbortedCustomMessage;
-                priority   = onAbortedCustomPriority;
-                level      = onAbortedCustomLevel;
-                attachment = onAbortedCustomAttachment;
+                title          = onAbortedCustomTitle;
+                message        = onAbortedCustomMessage;
+                priority       = onAbortedCustomPriority;
+                level          = onAbortedCustomLevel;
+                attachBuildLog = onAbortedCustomAttachBuildLog;
+                attachment     = onAbortedCustomAttachment;
             } else {
                 priority = NotifyEventsService.PRIORITY_NORMAL;
                 level    = NotifyEventsService.LEVEL_INFO;
             }
         }
 
-        NotifyEventsService.getInstance().send(token, title, message, priority, level, attachment, run, filePath, launcher, taskListener, null);
+        NotifyEventsService.getInstance().send(token, title, message, priority, level, attachBuildLog, attachment, run, filePath, launcher, taskListener, null);
     }
 
     @Extension

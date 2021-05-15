@@ -10,6 +10,9 @@
     <f:entry title="Message" field="message">
         <f:textarea default="${descriptor.DEFAULT_MESSAGE}" />
     </f:entry>
+    <f:entry title="Attach build log" field="attachBuildLog">
+        <f:checkbox />
+    </f:entry>
     <f:entry title="Attachment" field="attachment">
         <f:textbox default="${descriptor.DEFAULT_ATTACHMENT}" />
     </f:entry>
@@ -39,6 +42,9 @@
                     <f:entry title="Message" field="onSuccessCustomMessage">
                         <f:textarea default="${descriptor.DEFAULT_ON_SUCCESS_MESSAGE}" />
                     </f:entry>
+                    <f:entry title="Attach build log" field="onSuccessCustomAttachBuildLog">
+                        <f:checkbox />
+                    </f:entry>
                     <f:entry title="Attachment" field="onSuccessCustomAttachment">
                         <f:textbox default="${descriptor.DEFAULT_ON_SUCCESS_ATTACHMENT}" />
                     </f:entry>
@@ -66,6 +72,9 @@
                     </div>
                     <f:entry title="Message" field="onUnstableCustomMessage">
                         <f:textarea default="${descriptor.DEFAULT_ON_UNSTABLE_MESSAGE}" />
+                    </f:entry>
+                    <f:entry title="Attach build log" field="onUnstableCustomAttachBuildLog">
+                        <f:checkbox />
                     </f:entry>
                     <f:entry title="Attachment" field="onUnstableCustomAttachment">
                         <f:textbox default="${descriptor.DEFAULT_ON_UNSTABLE_ATTACHMENT}" />
@@ -95,6 +104,9 @@
                     <f:entry title="Message" field="onFailureCustomMessage">
                         <f:textarea default="${descriptor.DEFAULT_ON_FAILURE_MESSAGE}" />
                     </f:entry>
+                    <f:entry title="Attach build log" field="onFailureCustomAttachBuildLog">
+                        <f:checkbox />
+                    </f:entry>
                     <f:entry title="Attachment" field="onFailureCustomAttachment">
                         <f:textbox default="${descriptor.DEFAULT_ON_FAILURE_ATTACHMENT}" />
                     </f:entry>
@@ -122,6 +134,9 @@
                     </div>
                     <f:entry title="Message" field="onAbortedCustomMessage">
                         <f:textarea default="${descriptor.DEFAULT_ON_ABORTED_MESSAGE}" />
+                    </f:entry>
+                    <f:entry title="Attach build log" field="onAbortedCustomAttachBuildLog">
+                        <f:checkbox />
                     </f:entry>
                     <f:entry title="Attachment" field="onAbortedCustomAttachment">
                         <f:textbox default="${descriptor.DEFAULT_ON_ABORTED_ATTACHMENT}" />

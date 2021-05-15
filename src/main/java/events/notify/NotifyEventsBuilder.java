@@ -26,12 +26,13 @@ import java.util.Map;
 
 public class NotifyEventsBuilder extends Builder implements SimpleBuildStep {
 
-    private Secret token;
-    private String title;
-    private String message;
-    private String priority;
-    private String level;
-    private String attachment;
+    private Secret  token;
+    private String  title;
+    private String  message;
+    private String  priority;
+    private String  level;
+    private Boolean attachBuildLog;
+    private String  attachment;
 
     @Override
     public DescriptorImpl getDescriptor() {
@@ -39,30 +40,37 @@ public class NotifyEventsBuilder extends Builder implements SimpleBuildStep {
     }
 
     @DataBoundConstructor
-    public NotifyEventsBuilder(final String token, final String title, final String message, final String priority, final String level, final String attachment) {
-        this.token      = Secret.fromString(Util.fixEmptyAndTrim(token));
-        this.title      = Util.fixEmptyAndTrim(title);
-        this.message    = Util.fixEmptyAndTrim(message);
-        this.priority   = Util.fixEmptyAndTrim(priority);
-        this.level      = Util.fixEmptyAndTrim(level);
-        this.attachment = Util.fixEmptyAndTrim(attachment);
+    public NotifyEventsBuilder(final String token, final String title, final String message, final String priority, final String level, final Boolean attachBuildLog, final String attachment) {
+        this.token          = Secret.fromString(Util.fixEmptyAndTrim(token));
+        this.title          = Util.fixEmptyAndTrim(title);
+        this.message        = Util.fixEmptyAndTrim(message);
+        this.priority       = Util.fixEmptyAndTrim(priority);
+        this.level          = Util.fixEmptyAndTrim(level);
+        this.attachBuildLog = attachBuildLog;
+        this.attachment     = Util.fixEmptyAndTrim(attachment);
     }
 
     // Backward compatible with version prior 1.4.0
     public NotifyEventsBuilder(final String token, final String message) {
-        this(token, DescriptorImpl.DEFAULT_TITLE, message, DescriptorImpl.DEFAULT_PRIORITY, DescriptorImpl.DEFAULT_LEVEL, "");
+        this(token, DescriptorImpl.DEFAULT_TITLE, message, DescriptorImpl.DEFAULT_PRIORITY, DescriptorImpl.DEFAULT_LEVEL, DescriptorImpl.DEFAULT_ATTACH_BUILD_LOG, DescriptorImpl.DEFAULT_ATTACHMENT);
     }
 
     // Backward compatible with version prior 1.5.0
     public NotifyEventsBuilder(final String token, final String title, final String message, final String priority, final String level) {
-        this(token, title, message, priority, level, "");
+        this(token, title, message, priority, level, DescriptorImpl.DEFAULT_ATTACH_BUILD_LOG, DescriptorImpl.DEFAULT_ATTACHMENT);
+    }
+
+    // Backward compatible with version prior 1.6.0
+    public NotifyEventsBuilder(final String token, final String title, final String message, final String priority, final String level, final String attachment) {
+        this(token, title, message, priority, level, DescriptorImpl.DEFAULT_ATTACH_BUILD_LOG, attachment);
     }
 
     public NotifyEventsBuilder() {
-        this.title      = DescriptorImpl.DEFAULT_TITLE;
-        this.priority   = DescriptorImpl.DEFAULT_PRIORITY;
-        this.level      = DescriptorImpl.DEFAULT_LEVEL;
-        this.attachment = DescriptorImpl.DEFAULT_ATTACHMENT;
+        this.title          = DescriptorImpl.DEFAULT_TITLE;
+        this.priority       = DescriptorImpl.DEFAULT_PRIORITY;
+        this.level          = DescriptorImpl.DEFAULT_LEVEL;
+        this.attachBuildLog = DescriptorImpl.DEFAULT_ATTACH_BUILD_LOG;
+        this.attachment     = DescriptorImpl.DEFAULT_ATTACHMENT;
     }
 
     public String getToken() {
@@ -109,6 +117,12 @@ public class NotifyEventsBuilder extends Builder implements SimpleBuildStep {
         this.level = level;
     }
 
+    public Boolean getAttachBuildLog() { return attachBuildLog; }
+
+    public void setAttachBuildLog(final Boolean attachBuildLog) {
+        this.attachBuildLog = attachBuildLog;
+    }
+
     public String getAttachment() { return attachment; }
 
     public void setAttachment(final String attachment) {
@@ -121,24 +135,26 @@ public class NotifyEventsBuilder extends Builder implements SimpleBuildStep {
             @Nonnull FilePath filePath,
             @Nonnull Launcher launcher,
             @Nonnull TaskListener taskListener) throws InterruptedException, IOException {
-        NotifyEventsService.getInstance().send(token, title, message, priority, level, attachment, run, filePath, launcher, taskListener, null);
+        NotifyEventsService.getInstance().send(token, title, message, priority, level, attachBuildLog, attachment, run, filePath, launcher, taskListener, null);
     }
 
     @Extension
     public static class DescriptorImpl extends BuildStepDescriptor<Builder> {
 
-        public final static String DEFAULT_TITLE      = "$BUILD_TAG - Message";
-        public final static String DEFAULT_MESSAGE    = "";
-        public final static String DEFAULT_PRIORITY   = NotifyEventsService.PRIORITY_NORMAL;
-        public final static String DEFAULT_LEVEL      = NotifyEventsService.LEVEL_INFO;
-        public final static String DEFAULT_ATTACHMENT = "";
+        public final static String  DEFAULT_TITLE            = "$BUILD_TAG - Message";
+        public final static String  DEFAULT_MESSAGE          = "";
+        public final static String  DEFAULT_PRIORITY         = NotifyEventsService.PRIORITY_NORMAL;
+        public final static String  DEFAULT_LEVEL            = NotifyEventsService.LEVEL_INFO;
+        public final static Boolean DEFAULT_ATTACH_BUILD_LOG = false;
+        public final static String  DEFAULT_ATTACHMENT       = "";
 
-        private Secret token;
-        private String title;
-        private String message;
-        private String priority;
-        private String level;
-        private String attachment;
+        private Secret  token;
+        private String  title;
+        private String  message;
+        private String  priority;
+        private String  level;
+        private Boolean attachBuildLog;
+        private String  attachment;
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         /// Token
@@ -285,6 +301,19 @@ public class NotifyEventsBuilder extends Builder implements SimpleBuildStep {
             }
 
             return FormValidation.ok();
+        }
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// Attach build log
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        public Boolean getAttachBuildLog() {
+            return attachBuildLog;
+        }
+
+        @DataBoundSetter
+        public void setAttachBuildLog(final Boolean attachBuildLog) {
+            this.attachBuildLog = attachBuildLog;
         }
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
