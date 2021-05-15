@@ -153,41 +153,43 @@ public class NotifyEventsService {
 
         JSONArray files = new JSONArray();
 
-        try {
-            Map<String, String> filePaths = workspace.act(new ListFiles(attachment, ""));
+        if (!attachment.trim().isEmpty()) {
+            try {
+                Map<String, String> filePaths = workspace.act(new ListFiles(attachment, ""));
 
-            if (!filePaths.isEmpty()) {
-                int cnt = 0;
+                if (!filePaths.isEmpty()) {
+                    int cnt = 0;
 
-                for (Map.Entry<String, String> entry : filePaths.entrySet()) {
-                    listener.getLogger().printf("File: %s%n", entry.getKey());
+                    for (Map.Entry<String, String> entry : filePaths.entrySet()) {
+                        listener.getLogger().printf("File: %s%n", entry.getValue());
 
-                    byte[] content = Files.readAllBytes(Paths.get(entry.getValue()));
-                    byte[] encoded = Base64.getEncoder().encode(content);
+                        byte[] content = Files.readAllBytes(Paths.get(entry.getValue()));
+                        byte[] encoded = Base64.getEncoder().encode(content);
 
-                    String encodedString = new String(encoded, StandardCharsets.US_ASCII);
+                        String encodedString = new String(encoded, StandardCharsets.US_ASCII);
 
-                    JSONObject file = new JSONObject();
+                        JSONObject file = new JSONObject();
 
-                    file.put("name",    entry.getKey());
-                    file.put("content", encodedString);
+                        file.put("name",    entry.getKey());
+                        file.put("content", encodedString);
 
-                    files.add(file);
+                        files.add(file);
 
-                    cnt++;
+                        cnt++;
 
-                    if (cnt > 3) {
-                        break;
+                        if (cnt > 3) {
+                            break;
+                        }
                     }
+                } else {
+                    listener.getLogger().printf("Empty attachment list%n");
                 }
-            } else {
-                listener.getLogger().printf("Empty attachment list%n");
-            }
-        } catch (Exception e) {
-            listener.error("Attachments handle error: %s%n%s%n", e.getMessage(), ExceptionUtils.getStackTrace(e));
-            run.setResult(Result.FAILURE);
+            } catch (Exception e) {
+                listener.error("Attachments handle error: %s%n%s%n", e.getMessage(), ExceptionUtils.getStackTrace(e));
+                run.setResult(Result.FAILURE);
 
-            return;
+                return;
+            }
         }
 
         JSONObject json = new JSONObject();
@@ -241,11 +243,9 @@ public class NotifyEventsService {
 
             fileSet.setCaseSensitive(true);
             fileSet.setFollowSymlinks(true);
-
+            
             for (String file : fileSet.getDirectoryScanner().getIncludedFiles()) {
-                file = file.replace(File.separatorChar, '/');
-
-                result.put(file, basedir.getAbsolutePath() + '/' + file);
+                result.put(file, basedir.getAbsolutePath() + File.separatorChar + file);
             }
 
             return result;
