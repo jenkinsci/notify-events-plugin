@@ -186,7 +186,6 @@ public class NotifyEventsService {
                 Map<String, String> filePaths = workspace.act(new ListFiles(attachment, ""));
 
                 if (!filePaths.isEmpty()) {
-
                     for (Map.Entry<String, String> entry : filePaths.entrySet()) {
                         listener.getLogger().printf("File: %s%n", entry.getValue());
 

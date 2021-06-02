@@ -58,7 +58,6 @@ public class NotifyEventsStep extends Step {
         this.token = Secret.fromString(token);
     }
 
-    @DataBoundSetter
     public void setToken(final Secret token) {
         this.token = token;
     }
@@ -346,16 +345,12 @@ public class NotifyEventsStep extends Step {
 
         @Override
         protected Void run() throws Exception {
-            final Run<?, ?> run = getContext().get(Run.class);
-            Objects.requireNonNull(run, "Run is mandatory here");
-
-            final FilePath workspace = getContext().get(FilePath.class);
-            Objects.requireNonNull(workspace, "FilePath is mandatory here");
-
-            final Launcher launcher = getContext().get(Launcher.class);
-            Objects.requireNonNull(launcher, "Launcher is mandatory here");
-
+            final Run<?, ?> run         = getContext().get(Run.class);
+            final FilePath workspace    = getContext().get(FilePath.class);
+            final Launcher launcher     = getContext().get(Launcher.class);
             final TaskListener listener = getContext().get(TaskListener.class);
+
+            Objects.requireNonNull(run, "Run is mandatory here");
             Objects.requireNonNull(listener, "Listener is mandatory here");
 
             NotifyEventsService.getInstance().send(step.token, step.title, step.message, step.priority, step.level, false, step.attachment, run, workspace, launcher, listener, null);
