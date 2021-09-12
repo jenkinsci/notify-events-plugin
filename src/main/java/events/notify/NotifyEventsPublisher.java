@@ -10,6 +10,7 @@ import hudson.model.Result;
 import hudson.model.Run;
 import hudson.model.TaskListener;
 import hudson.tasks.BuildStepDescriptor;
+import hudson.tasks.BuildStepMonitor;
 import hudson.tasks.Notifier;
 import hudson.tasks.Publisher;
 import hudson.util.FormValidation;
@@ -69,6 +70,11 @@ public class NotifyEventsPublisher extends Notifier implements SimpleBuildStep {
     private String  onAbortedCustomLevel;
     private Boolean onAbortedCustomAttachBuildLog;
     private String  onAbortedCustomAttachment;
+
+    @Override
+    public BuildStepMonitor getRequiredMonitorService() {
+        return BuildStepMonitor.NONE;
+    }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     /// Token

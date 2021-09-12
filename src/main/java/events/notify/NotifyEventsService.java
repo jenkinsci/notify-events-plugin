@@ -181,7 +181,7 @@ public class NotifyEventsService {
             cnt++;
         }
 
-        if (!attachment.trim().isEmpty()) {
+        if ((attachment != null) && !attachment.trim().isEmpty()) {
             try {
                 Map<String, String> filePaths = workspace.act(new ListFiles(attachment, ""));
 
